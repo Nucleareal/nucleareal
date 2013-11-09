@@ -28,7 +28,7 @@ public abstract class AchievementRegisterBase
 	public void doRegister()
 	{
 		register();
-		AchievementPage page = new AchievementPage("Animal Crossing", list.toArray(new Achievement[0]));
+		AchievementPage page = new AchievementPage(modname, list.toArray(new Achievement[0]));
 		AchievementPage.registerAchievementPage(page);
 	}
 

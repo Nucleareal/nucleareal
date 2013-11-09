@@ -7,8 +7,9 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class OreDictionaryHandler
 {
-	 @ForgeSubscribe
-	 public void onRegisterOre(OreDictionary.OreRegisterEvent event)
-	 {
-	 }
+	//今はもう使わないおじいさんのクラス
+	@ForgeSubscribe
+	public void onRegisterOre(OreDictionary.OreRegisterEvent event)
+	{
+	}
 }

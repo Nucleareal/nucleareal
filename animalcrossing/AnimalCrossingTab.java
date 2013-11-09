@@ -18,7 +18,7 @@ public class AnimalCrossingTab extends CreativeTabs
 	@SideOnly(Side.CLIENT)
     public Item getTabIconItem()
     {
-        return Item.itemsList[AnimalCrossing.RoseItem.itemID];
+        return Item.itemsList[AnimalCrossing.PachinkoGold.itemID];
     }
 
 	@SideOnly(Side.CLIENT)

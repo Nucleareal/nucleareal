@@ -24,7 +24,11 @@ public enum NuggetValue
 
 	public static NuggetValue of(int i)
 	{
-		return getAllElements().toArray(new NuggetValue[0])[i];
+		return values()[i];
+	}
+	
+	{
+		
 	}
 
 }

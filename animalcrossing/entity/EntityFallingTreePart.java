@@ -42,8 +42,6 @@ public class EntityFallingTreePart extends EntityFallingSand
 	public EntityFallingTreePart(World world, double x, double y, double z, int blockID, int meta, Position fallTo, List<ItemStack> istList)
 	{
 		super(world, x, y, z, Block.wood.blockID, 1);
-		//super(world, x, y, z, blockID, meta);
-		System.out.println(String.format("Construct With ID:%d meta:%d", blockID, meta));
 		this.fallTo = fallTo;
 		this.istList = istList;
 		varielMetadata = meta;
@@ -75,12 +73,9 @@ public class EntityFallingTreePart extends EntityFallingSand
 		}
 		else
 		{
-			//System.out.println(String.format("Updating ID:%d meta:%d", blockID, metadata));
-
 			this.prevPosX = this.posX;
 			this.prevPosY = this.posY;
 			this.prevPosZ = this.posZ;
-			// this.motionY -= 0.03999999910593033D;
 
 			if(this.boundingBox == null)
 			{
@@ -105,21 +100,13 @@ public class EntityFallingTreePart extends EntityFallingSand
 
 			// TODO MotionRateUpdate
 
-
 			if (!worldObj.isRemote)
 			{
 				int i = MathHelper.floor_double(this.posX);
 				int j = MathHelper.floor_double(this.posY);
 				int k = MathHelper.floor_double(this.posZ);
 
-				/*
-				 * if (this.fallTime == 1) { if (this.worldObj.getBlockId(i, j,
-				 * k) != this.blockID) { this.setDead(); return; }
-				 *
-				 * this.worldObj.setBlockToAir(i, j, k); }
-				 */
-
-				if (onGround || Math.abs(posY - fallTo.getY()) <= 0.05D || fallTime > 256)
+				if ( fallTime > 28 || onGround )
 				{
 					motionX *= 0.699999988079071D;
 					motionZ *= 0.699999988079071D;

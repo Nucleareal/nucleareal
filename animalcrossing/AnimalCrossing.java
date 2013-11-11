@@ -2,9 +2,10 @@ package net.minecraft.src.nucleareal.animalcrossing;
 
 import static cpw.mods.fml.relauncher.Side.CLIENT;
 
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.multiplayer.NetClientHandler;
@@ -21,26 +22,33 @@ import net.minecraft.src.nucleareal.ObjectTriple;
 import net.minecraft.src.nucleareal.Position;
 import net.minecraft.src.nucleareal.animalcrossing.block.BlockColorableFlower;
 import net.minecraft.src.nucleareal.animalcrossing.entity.EntityFallingTreePart;
+import net.minecraft.src.nucleareal.animalcrossing.entity.EntityFishingFloat;
 import net.minecraft.src.nucleareal.animalcrossing.entity.EntityFloatingBalloon;
 import net.minecraft.src.nucleareal.animalcrossing.entity.EntityFloatingChest;
 import net.minecraft.src.nucleareal.animalcrossing.entity.EntityPachinkoBullet;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemColorableFlower;
+import net.minecraft.src.nucleareal.animalcrossing.item.ItemFishingBait;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemFlowerDyePowder;
+import net.minecraft.src.nucleareal.animalcrossing.item.ItemGreatFishingRod;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemNugget;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemPachinko;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemWateringCan;
+import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipeFishingBait;
+import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipeFishingRod;
 import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipeNugget;
 import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipePachinko;
 import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipeRoseDye;
 import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipeWateringCan;
 import net.minecraft.src.nucleareal.animalcrossing.render.RenderRose;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.asm.transformers.AccessTransformer;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -67,16 +75,24 @@ public class AnimalCrossing extends NuclearealBase
 	@SidedProxy(clientSide = CSD, serverSide = SSD)
 	public static CommonProxy proxy;
 
+	public static final String CATEGORY_EFFECTIVES = "Effectives";
+
 	public static int WideSearchMax = 1000;
 
 	private static int NO_MEANING_VALUE = Integer.MAX_VALUE;
 	private static String DefaultAxe = "258, 271, 275, 279, 286, 24242, 24247, 24252, 24257, 24262";
 	private static String DefaultWood = "17, 1231";
 	private static String DefaultLeaf = "18, 1234";
+	private static String DefaultSword = "";
+	private static List<Class> axeClass;
+	private static List<Class> woodClass;
+	private static List<Class> leafClass;
+	private static List<Class> swordClass;
 
 	private static HashMap<String, NullValue> AxeList;
 	private static HashMap<String, NullValue> WoodList;
 	private static HashMap<String, NullValue> LeafList;
+	private static HashMap<String, NullValue> SwordList;
 	private static HashMap<String, Integer> TreeCountingMap;
 
 	public static Block Rose; public static Item RoseItem; public static int RoseID = 1220; public static int RoseRenderID = -1;
@@ -85,6 +101,8 @@ public class AnimalCrossing extends NuclearealBase
 	public static Block RoseWither; public static Item RoseWitherItem; public static int RoseWitherID = 1221;
 	public static Item WateringCanGold; public static int WateringCanGoldID = 24300;
 	public static Item PachinkoGold; public static int PachinkoGoldID = 24301;
+	public static Item FishingRodGold; public static int FishingRodGoldID = 24302;
+	public static Item FishingBait; public static int FishingBaitID = 0;
 
 	public static HashMap<String, ObjectTriple<ArrayList<ItemStack>, ArrayList<ItemStack>, Integer>> OreDictMap;
 
@@ -96,12 +114,18 @@ public class AnimalCrossing extends NuclearealBase
 	public static int BlackToGoldChance = 16;
 	public static int SprintingDespawnChance = 96;
 	public static int BalloonSpawnChance = 8192;
+	public static int AchievementBeginID = 1073741823;
 	public static boolean AddRecipeInkVial = false;
+	public static boolean isForceRegisterAchievement = true;
+	public static boolean setNoDamageWithoutWeapon = true;
+	public static boolean PachinkoUsesBullet = false;
+	public static boolean FishingRodUsesBait = false;
 
 	private static int Entity_FallingBlockID = 0;
 	private static int Entity_FloatingBalloonnID = 1;
 	private static int Entity_FloatingChestID = 2;
 	private static int Entity_PachinkoBulletID = 3;
+	private static int Entity_FishingID = 4;
 
 	public static CreativeTabs AnimalCrossingTab;
 
@@ -128,6 +152,11 @@ public class AnimalCrossing extends NuclearealBase
 		AxeList = new HashMap<String, NullValue>();
 		WoodList = new HashMap<String, NullValue>();
 		LeafList = new HashMap<String, NullValue>();
+		SwordList = new HashMap<String, NullValue>();
+		axeClass = new LinkedList<Class>();
+		woodClass = new LinkedList<Class>();
+		leafClass = new LinkedList<Class>();
+		swordClass = new LinkedList<Class>();
 		TreeCountingMap = new HashMap<String, Integer>();
 
 		GameRegistry.registerPlayerTracker(Handler);
@@ -138,9 +167,10 @@ public class AnimalCrossing extends NuclearealBase
 			@Override
 			public void onLoad(Configuration conf)
 			{
-				loadEffectives(conf, "AxeIds", DefaultAxe, AxeList);
-				loadEffectives(conf, "WoodIds", DefaultWood, WoodList);
-				loadEffectives(conf, "LeafIds", DefaultLeaf, LeafList);
+				axeClass = loadEffectives(conf, "AxeIds", DefaultAxe, AxeList);
+				woodClass = loadEffectives(conf, "WoodIds", DefaultWood, WoodList);
+				leafClass = loadEffectives(conf, "LeafIds", DefaultLeaf, LeafList);
+				swordClass = loadEffectives(conf, "SwordIds", DefaultSword, SwordList);
 
 				RoseID = conf.get(conf.CATEGORY_BLOCK, "RoseID", RoseID).getInt();
 				RoseWitherID = conf.get(conf.CATEGORY_BLOCK, "RoseWitherID", RoseWitherID).getInt();
@@ -150,6 +180,9 @@ public class AnimalCrossing extends NuclearealBase
 
 				WateringCanGoldID = conf.get(conf.CATEGORY_ITEM, "WateringCanGoldID", WateringCanGoldID).getInt();
 				PachinkoGoldID = conf.get(conf.CATEGORY_ITEM, "PachinkoGoldID", PachinkoGoldID).getInt();
+				FishingRodGoldID = conf.get(conf.CATEGORY_ITEM, "FishingRodGoldID", FishingRodGoldID).getInt();
+
+				FishingBaitID = conf.get(conf.CATEGORY_ITEM, "FishingBaitID", FishingBaitID).getInt();
 
 				RoseSpawnChance = conf.get("Chance", "RoseSpawnDenominator", RoseSpawnChance).getInt();
 				RoseDeadChance = conf.get("Chance", "RoseDespawnDenominator", RoseDeadChance).getInt();
@@ -158,14 +191,20 @@ public class AnimalCrossing extends NuclearealBase
 				SprintingDespawnChance = conf.get("Chance", "RoseSprintDespawnDenominator", SprintingDespawnChance).getInt();
 				BalloonSpawnChance = conf.get("Chance", "FloatingBalloonSpawnChanceDenominator", BalloonSpawnChance).getInt();
 
+				AchievementBeginID = conf.get("Achievement", "AchievementBeginID", AchievementBeginID).getInt();
+				isForceRegisterAchievement = conf.get("Achievement", "isForceRegisterAchievement", isForceRegisterAchievement).getBoolean(isForceRegisterAchievement);
+
 				AddRecipeInkVial = conf.get(conf.CATEGORY_GENERAL, "EnableInkVialRecipe", AddRecipeInkVial).getBoolean(AddRecipeInkVial);
 				WideSearchMax = conf.get(conf.CATEGORY_GENERAL, "TreeCutSearchMax", WideSearchMax).getInt();
+				setNoDamageWithoutWeapon = conf.get(conf.CATEGORY_GENERAL, "SetNoDamageWithoutWeapon", setNoDamageWithoutWeapon).getBoolean(setNoDamageWithoutWeapon);
+				PachinkoUsesBullet = conf.get(conf.CATEGORY_GENERAL, "PachinkoUsesBullet", PachinkoUsesBullet).getBoolean(PachinkoUsesBullet);
+				FishingRodUsesBait = conf.get(conf.CATEGORY_GENERAL, "FishingRodUsesBait", FishingRodUsesBait).getBoolean(FishingRodUsesBait);
 			}
 		});
 
 		MinecraftForge.EVENT_BUS.register(new OreDictionaryHandler());
 		MinecraftForge.EVENT_BUS.register(new PickupHandler());
-		MinecraftForge.EVENT_BUS.register(new FloatingBalloonAttackedHandler());
+		MinecraftForge.EVENT_BUS.register(new OnLivingAttackHandler());
 
 		GameRegistry.registerCraftingHandler(new CreateWateringCanHandler());
 		GameRegistry.registerCraftingHandler(new CraftingHandler());
@@ -277,6 +316,38 @@ public class AnimalCrossing extends NuclearealBase
 			GameRegistry.addRecipe(recipe);
 		}
 
+		if(isValidItemID(FishingRodGoldID))
+		{
+			FishingRodGold = new ItemGreatFishingRod(FishingRodGoldID - 256, FishingRodMaterial.Gold).setUnlocalizedName("ItemFishingRodGold").setTextureName("nc:I_FishingRodGold");
+			ItemGreatFishingRod cnv = (ItemGreatFishingRod)FishingRodGold;
+			GameRegistry.registerItem(FishingRodGold, "FishingRodGold", "AnimalCrossing");
+			String type = FishingRodMaterial.Names_enUS[cnv.getMaterial().ordinal()];
+			String enUS = type;
+			String jaJP = FishingRodMaterial.Names_jaJP[cnv.getMaterial().ordinal()];
+			LanguageRegistry.instance().addNameForObject(new ItemStack(FishingRodGold), "en_US", enUS+" FishingRod");
+			LanguageRegistry.instance().addNameForObject(new ItemStack(FishingRodGold), "ja_JP", jaJP+"のつりざお");
+			RecipeFishingRod recipe = new RecipeFishingRod(cnv);
+			recipe.registerAllRecipes();
+			GameRegistry.addRecipe(recipe);
+		}
+
+		if(isValidItemID(FishingBaitID))
+		{
+			FishingBait = new ItemFishingBait(FishingBaitID - 256, 1, false).setUnlocalizedName("ItemFishingBait").setTextureName("nc:I_FishingBait");
+			GameRegistry.registerItem(FishingBait, "FishingBait", "AnimalCrossing");
+			for(int i = 0; i < Bait.size(); i++)
+			{
+				LanguageRegistry.instance().addNameForObject(new ItemStack(FishingBait, 1, i), "en_US", Bait.Names_enUS[i]+" Bait");
+				LanguageRegistry.instance().addNameForObject(new ItemStack(FishingBait, 1, i), "ja_JP", Bait.Names_jaJP[i]+"魚の餌");
+			}
+			RecipeFishingBait recipe = new RecipeFishingBait(FishingBait);
+			recipe.registerAllRecipes();
+		}
+		else
+		{
+			FishingRodUsesBait = false;
+		}
+
 		if(isValidItemID(NuggetsID))
 		{
 			Nuggets = new ItemNugget(NuggetsID).setUnlocalizedName("ItemNugget").setTextureName("nc:I_Nugget_");
@@ -292,6 +363,7 @@ public class AnimalCrossing extends NuclearealBase
 		EntityRegistry.registerModEntity(EntityFloatingBalloon.class, "FloatingBalloon", Entity_FloatingBalloonnID, this, 250, 5, true);
 		EntityRegistry.registerModEntity(EntityFloatingChest.class, "FloatingChest", Entity_FloatingChestID, this, 250, 5, true);
 		EntityRegistry.registerModEntity(EntityPachinkoBullet.class, "PachinkoBullet", Entity_PachinkoBulletID, this, 250, 5, true);
+		EntityRegistry.registerModEntity(EntityFishingFloat.class, "FishingFloat", Entity_FishingID, this, 250, 5, true);
 
 		proxy.registerRenderers();
 
@@ -299,6 +371,7 @@ public class AnimalCrossing extends NuclearealBase
 		LanguageRegistry.instance().addStringLocalization("entity.FloatingBalloon.name", "en_US", "FloatingBalloon");
 		LanguageRegistry.instance().addStringLocalization("entity.FloatingChest.name", "en_US", "FloatingChest");
 		LanguageRegistry.instance().addStringLocalization("entity.PachinkoBullet.name", "en_US", "PachinkoBullet");
+		LanguageRegistry.instance().addStringLocalization("entity.FishingFloat.name", "en_US", "FishingFloat");
 
 		new Achievements("AnimalCrossing").doRegister();
 	}
@@ -355,9 +428,10 @@ public class AnimalCrossing extends NuclearealBase
 		}
 	}
 
-	private void loadEffectives(Configuration conf, String desc, String defValue, HashMap<String, NullValue> list)
+	private List<Class> loadEffectives(Configuration conf, String desc, String defValue, HashMap<String, NullValue> list)
 	{
-		String ids = conf.get(Configuration.CATEGORY_GENERAL, desc, defValue).getString();
+		String ids		= conf.get(CATEGORY_EFFECTIVES, desc, defValue).getString();
+		String classes	= conf.get(CATEGORY_EFFECTIVES, desc.replace("Id", "Classe"), "").getString();
 		String[] idArray = ids.replace(" ", "").split(",");
 		for(String id : idArray)
 		{
@@ -370,6 +444,22 @@ public class AnimalCrossing extends NuclearealBase
 			}
 			list.put(res, NullValue.get());
 		}
+		String[] classArray = classes.replace(" ", "").split(",");
+		List<Class> res = new LinkedList<Class>();
+		for(String cz : classArray)
+		{
+			if(cz == null || cz.isEmpty()) continue;
+
+			try
+			{
+				Class clazz = Class.forName(cz);
+				res.add(clazz);
+			}
+			catch(Exception e)
+			{
+			}
+		}
+		return res;
 	}
 
 	public static boolean counting(World world, int x, int y, int z)
@@ -405,27 +495,31 @@ public class AnimalCrossing extends NuclearealBase
 		}
 	}
 
-	private static boolean isEffective(int id, int meta, HashMap<String, NullValue> list)
+	private static boolean isEffective(int id, int meta, HashMap<String, NullValue> list, List<Class> cz)
 	{
-		return 	list.containsKey(String.format("%d:%d", id, NO_MEANING_VALUE)) ||
-				list.containsKey(String.format("%d:%d", id, meta));
+		return 	list.containsKey(String.format("%d:%d", id, NO_MEANING_VALUE))	||
+				list.containsKey(String.format("%d:%d", id, meta))				||
+				cz.contains(cz);
 	}
 
 	public static boolean isAxeTool(ItemStack ist)
 	{
-		return 	isEffective(ist.itemID, ist.getItemDamage(), AxeList);
+		return 	isEffective(ist.itemID, ist.getItemDamage(), AxeList, axeClass);
 	}
 
 	public static boolean isWood(int id, int meta)
 	{
-		return 	isEffective(id, meta, WoodList);
+		return 	isEffective(id, meta, WoodList, woodClass);
 	}
 
 	public static boolean isLeaf(int id, int meta)
 	{
-		System.out.println(String.format("isLeaf? (%d,%d)", id, meta));
+		return	isEffective(id, meta, LeafList, leafClass);
+	}
 
-		return	isEffective(id, meta, LeafList);
+	public static boolean isSword(int id, int meta)
+	{
+		return	isEffective(id, meta, SwordList, swordClass);
 	}
 
 	@SideOnly(CLIENT)

@@ -77,8 +77,14 @@ public class NBTTool
 
 	public int incleaseValue(String name)
 	{
+		return incleaseValue(name, 1);
+	}
+
+	public int incleaseValue(String name, int size)
+	{
 		int nowValue = getIntValueSafely(name);
-		Tag.setInteger(name, ++nowValue);
+		nowValue += size;
+		Tag.setInteger(name, nowValue);
 		return nowValue;
 	}
 }

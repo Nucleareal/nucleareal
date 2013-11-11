@@ -137,7 +137,7 @@ public class PacketTreePart extends Packet
 
 		player.getCurrentEquippedItem().damageItem(SpawnedCount, player);
 
-		player.triggerAchievement(Achievements.cutATree);
+		Achievements.triggerAchievement(player, Achievements.cutATree);
 	}
 
 	@Override
@@ -150,7 +150,7 @@ public class PacketTreePart extends Packet
 	{
 		if (SpawnMap.containsKey(now.getVisualityValue())) return;
 
-		if (UtilBlock.isEqualBlocks(world, now, new Position(X, Y, Z)) ||
+		if (UtilBlock.isEqualWoodBlocks(world, now, new Position(X, Y, Z)) ||
 				AnimalCrossing.isLeaf(UtilWorld.getBlockID(world, now), UtilWorld.getBlockMetadata(world, now)))
 		{
 			SpawnMap.put(now.getVisualityValue(), Boolean.valueOf(true));
@@ -160,8 +160,6 @@ public class PacketTreePart extends Packet
 		}
 		else
 		{
-			System.out.println(String.format("search %s: %d %d", now.getVisualityValue(), UtilWorld.getBlockID(world, now), UtilWorld.getBlockMetadata(world, now)));
-
 			SpawnMap.put(now.getVisualityValue(), Boolean.valueOf(false));
 		}
 	}

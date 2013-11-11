@@ -3,6 +3,7 @@ package net.minecraft.src.nucleareal.animalcrossing;
 import java.lang.reflect.Field;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
@@ -20,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.nucleareal.AchievementRegisterBase;
 import net.minecraft.src.nucleareal.Direction;
 import net.minecraft.src.nucleareal.ObjectPair;
 import net.minecraft.src.nucleareal.Position;
@@ -28,6 +30,7 @@ import net.minecraft.src.nucleareal.UtilMinecraft;
 import net.minecraft.src.nucleareal.UtilPosition;
 import net.minecraft.src.nucleareal.UtilWorld;
 import net.minecraft.src.nucleareal.animalcrossing.command.LoginCommandRegisterer;
+import net.minecraft.stats.Achievement;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IScheduledTickHandler;
@@ -156,8 +159,6 @@ public class TickHandler implements IScheduledTickHandler, IPlayerTracker
 				packet.metadata = meta;
 
 	            minecraft.getNetHandler().addToSendQueue(packet);
-
-	            minecraft.getNetHandler().addToSendQueue(new Packet250CustomPayload("AnmCrssTr", null));
 			}
 		}
 	}
@@ -192,8 +193,18 @@ public class TickHandler implements IScheduledTickHandler, IPlayerTracker
 		beforeSpawnTime = 0L;
 
 		new LoginCommandRegisterer().registerAll();
+		doUnlockAchievements();
 
 		refreshManager();
+	}
+
+	private void doUnlockAchievements()
+	{
+		while(!unlockAchievements.isEmpty())
+		{
+			Achievement ach = unlockAchievements.poll();
+			AchievementRegisterBase.triggerAchievement(Player, ach);
+		}
 	}
 
 	@Override
@@ -256,10 +267,10 @@ public class TickHandler implements IScheduledTickHandler, IPlayerTracker
 			try
 			{
 				ManagerClass = ItemInWorldManager.class;
-				Breaking = ManagerClass.getDeclaredField(AnimalCrossing.DEBUG ? "isDestroyingBlock" : "field_73088_d");
-				xg = ManagerClass.getDeclaredField(AnimalCrossing.DEBUG ? "partiallyDestroyedBlockX" : "field_73086_f");
-				yg = ManagerClass.getDeclaredField(AnimalCrossing.DEBUG ? "partiallyDestroyedBlockY" : "field_73087_g");
-				zg = ManagerClass.getDeclaredField(AnimalCrossing.DEBUG ? "partiallyDestroyedBlockZ" : "field_73099_h");
+				Breaking = ManagerClass.getDeclaredField(F_ckinMojang.DestroyingBlock.getFieldName());
+				xg = ManagerClass.getDeclaredField(F_ckinMojang.DestroyingBlockX.getFieldName());
+				yg = ManagerClass.getDeclaredField(F_ckinMojang.DestroyingBlockY.getFieldName());
+				zg = ManagerClass.getDeclaredField(F_ckinMojang.DestroyingBlockZ.getFieldName());
 				Breaking.setAccessible(true);
 				xg.setAccessible(true);
 				yg.setAccessible(true);
@@ -267,8 +278,19 @@ public class TickHandler implements IScheduledTickHandler, IPlayerTracker
 			}
 			catch(NoSuchFieldException e)
 			{
-				Player.addChatMessage(e.getLocalizedMessage());
 			}
 		}
+	}
+
+	private static Queue<Achievement> unlockAchievements;
+
+	static
+	{
+		unlockAchievements = new LinkedList<Achievement>();
+	}
+
+	public static void addAchievementForUnlock(Achievement achi)
+	{
+		unlockAchievements.offer(achi);
 	}
 }

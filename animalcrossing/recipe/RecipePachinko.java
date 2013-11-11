@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.src.nucleareal.ObjectPair;
 import net.minecraft.src.nucleareal.RecipeBase;
+import net.minecraft.src.nucleareal.animalcrossing.AnimalCrossing;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemPachinko;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -31,21 +32,24 @@ public class RecipePachinko extends RecipeBase
 			'-', Item.leather,
 			'o', Item.slimeBall,
 		});
-		GameRegistry.addShapedRecipe(new ItemStack(Pachinko, 1, 0), new Object[]{
-			"oIL",
-			"IFI",
-			"LIo",
-			'I', Item.ingotGold,
-			'o', Item.slimeBall,
-			'F', Item.gunpowder,
-			'L', Item.leather,
-		});
-		GameRegistry.addShapelessRecipe(new ItemStack(Pachinko, 1, 0), new Object[]{
-			Item.goldNugget, Item.goldNugget, Item.goldNugget, Item.goldNugget,
-			Item.slimeBall,
-			Item.gunpowder,
-			Item.leather,
-		});
+		if(AnimalCrossing.PachinkoUsesBullet)
+		{
+			GameRegistry.addShapedRecipe(new ItemStack(Pachinko, 3, 0), new Object[]{
+				"oIL",
+				"IFI",
+				"LIo",
+				'I', Item.ingotGold,
+				'o', Item.slimeBall,
+				'F', Item.gunpowder,
+				'L', Item.leather,
+			});
+			GameRegistry.addShapelessRecipe(new ItemStack(Pachinko, 1, 0), new Object[]{
+				Item.goldNugget, Item.goldNugget, Item.goldNugget, Item.goldNugget,
+				Item.slimeBall,
+				Item.gunpowder,
+				Item.leather,
+			});
+		}
 	}
 
 	@Override

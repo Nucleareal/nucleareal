@@ -23,14 +23,15 @@ public class PickupHandler
 			EntityPlayer p = event.entityPlayer;
 			Item pickup = ist.getItem();
 			int meta = ist.getItemDamage();
+			int size = ist.stackSize;
 
 			if(pickup instanceof ItemColorableFlower)
 			{
-				p.triggerAchievement(Achievements.pickUpRose);
-				int pickupcount = AnimalCrossing.NBT.incleaseValue(pickUpRoseKey);
+				Achievements.triggerAchievement(p, Achievements.pickUpRose);
+				int pickupcount = AnimalCrossing.NBT.incleaseValue(pickUpRoseKey, size);
 				if(pickupcount > 1000) p.triggerAchievement(Achievements.pickUpManyRose);
 
-				AnimalCrossing.NBT.incleaseValue(pickUpRoseKey+meta);
+				AnimalCrossing.NBT.incleaseValue(pickUpRoseKey+meta, size);
 
 				RoseColor color = RoseColor.of(meta);
 				switch(color)
@@ -45,7 +46,7 @@ public class PickupHandler
 						int w = AnimalCrossing.NBT.getIntValueSafely(pickUpRoseKey+White.ordinal());
 						if(r > 0 && y > 0 && w > 0)
 						{
-							p.triggerAchievement(Achievements.pickUpBaseRoses);
+							Achievements.triggerAchievement(p, Achievements.pickUpBaseRoses);
 						}
 						break;
 					}
@@ -54,16 +55,15 @@ public class PickupHandler
 					case Black:
 					case Purple:
 					{
-						p.triggerAchievement(Achievements.pickUpRareRose); break;
+						Achievements.triggerAchievement(p, Achievements.pickUpRareRose); break;
 					}
 					case Blue:
 					{
-						p.triggerAchievement(Achievements.pickUpBlueRose); break;
+						Achievements.triggerAchievement(p, Achievements.pickUpBlueRose); break;
 					}
 					case Gold:
 					{
-						p.triggerAchievement(Achievements.pickUpGoldRose);
-						p.addChatMessage("Picked up gold rose.");
+						Achievements.triggerAchievement(p, Achievements.pickUpGoldRose); break;
 					}
 				}
 			}

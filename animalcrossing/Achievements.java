@@ -52,11 +52,31 @@ public class Achievements extends AchievementRegisterBase
 		shootedBalloon		= addAchievement("Shooter Beginner", "Break a Balloon.", 2, -4, Block.chest, createPachinko);
 
 		cutATree			= addAchievement("Cut a tree", "Cut a tree by Axe", 0, 0, Item.axeStone, null);
+
+		if(AnimalCrossing.isValidItemID(AnimalCrossing.NuggetsID))
+		{
+
+		}
 	}
 
 	@Override
 	protected int getBeginAchievementValue()
 	{
-		return 40000;
+		return AnimalCrossing.AchievementBeginID;
+	}
+
+	@Override
+	protected boolean isForceRegister()
+	{
+		return AnimalCrossing.isForceRegisterAchievement;
+	}
+
+	@Override
+	protected void onForceRegister(Achievement achi, boolean isExist)
+	{
+		if(isExist)
+		{
+			TickHandler.addAchievementForUnlock(achi);
+		}
 	}
 }

@@ -18,11 +18,11 @@ public class CraftingHandler implements ICraftingHandler
 	{
 		if(ist.getItem() instanceof ItemWateringCan && ist.getItemDamage() == ist.getMaxDamage())
 		{
-			player.triggerAchievement(Achievements.createWateringCan);
+			Achievements.triggerAchievement(player, Achievements.createWateringCan);
 		}
 		if(ist.getItem() instanceof ItemPachinko && ist.getItemDamage() == ist.getMaxDamage())
 		{
-			player.triggerAchievement(Achievements.createPachinko);
+			Achievements.triggerAchievement(player, Achievements.createPachinko);
 		}
 	}
 

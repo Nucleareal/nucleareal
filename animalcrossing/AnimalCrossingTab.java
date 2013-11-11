@@ -16,14 +16,8 @@ public class AnimalCrossingTab extends CreativeTabs
 	}
 
 	@SideOnly(Side.CLIENT)
-    public Item getTabIconItem()
+	public ItemStack getIconItemStack()
     {
-        return Item.itemsList[AnimalCrossing.PachinkoGold.itemID];
-    }
-
-	@SideOnly(Side.CLIENT)
-	public int getTabIconItemIndex()
-    {
-        return getTabIconItem().itemID;
+        return new ItemStack(AnimalCrossing.PachinkoGold,1,1);
     }
 }

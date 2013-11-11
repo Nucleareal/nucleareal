@@ -45,7 +45,7 @@ public class EntityFloatingBalloon extends EntityLiving
 	@Override
 	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
     {
-		UtilMinecraft.getWorldAndPlayer("").getV2().triggerAchievement(Achievements.shootedBalloon);
+		Achievements.triggerAchievement(Achievements.shootedBalloon);
 		return super.attackEntityFrom(par1DamageSource, par2);
     }
 

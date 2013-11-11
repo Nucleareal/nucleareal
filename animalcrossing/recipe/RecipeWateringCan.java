@@ -33,11 +33,11 @@ public class RecipeWateringCan extends RecipeBase
 		ItemStack Gen = new ItemStack(WateringCan, 1, WateringCan.getMaxDamage());
 
 		GameRegistry.addRecipe(Box, new Object[]{
-			BoxRecipe[0], BoxRecipe[1], BoxRecipe[2],
+			BoxRecipe[0], BoxRecipe[1],
 			'X', new ItemStack(ingot),
 		});
 		GameRegistry.addRecipe(Gen, new Object[]{
-			GenRecipe[0], GenRecipe[1], GenRecipe[2],
+			GenRecipe[0], GenRecipe[1],
 			'X', new ItemStack(ingot),
 			'Y', Box,
 		});

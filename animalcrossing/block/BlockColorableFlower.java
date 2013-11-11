@@ -337,12 +337,12 @@ public class BlockColorableFlower extends BlockFlower
 
     		EntityPlayer player = UtilMinecraft.getWorldAndPlayer("").getV2();
 
-    		player.triggerAchievement(Achievements.breakOutRose);
+    		Achievements.triggerAchievement(player, Achievements.breakOutRose);
     		int breaked = AnimalCrossing.NBT.incleaseValue("BreakOutRose:");
     		int breakedM = AnimalCrossing.NBT.incleaseValue("BreakOutRose:"+meta);
     		if(breaked > 100)
     		{
-    			player.triggerAchievement(Achievements.breakOutManyRose);
+    			Achievements.triggerAchievement(player, Achievements.breakOutManyRose);
     		}
     	}
 	}

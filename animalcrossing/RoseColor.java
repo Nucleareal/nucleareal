@@ -28,7 +28,7 @@ public enum RoseColor
 		}
 	},
 	Tin(0xDFDFEF, 2),
-	Silver(0xC0C0C0, 3, true)
+	Silver(0xC0C0C0, 3, true, 11)
 	{
 		@Override
 		public int getPlantColor()
@@ -45,7 +45,7 @@ public enum RoseColor
 			return 4F;
 		}
 	},
-	Diamond(0x7FDFBF, 4, true, 3)
+	Diamond(0x7FDFBF, 4, true, 10)
 	{
 		@Override
 		public int getPlantColor()
@@ -60,7 +60,7 @@ public enum RoseColor
 		}
 	},
 	RedStone(0xBF0000, 3, 7),
-	Copper(0x8C4841, 2, true)
+	Copper(0x8C4841, 2, true, 9)
 	{
 		@Override
 		public int getPlantColor()
@@ -139,7 +139,7 @@ public enum RoseColor
 
 	public static RoseColor of(int num)
 	{
-		return arr[num % arr.length];
+		return values()[num];
 	}
 
 	private static RoseColor[] arr = getAllColors().toArray(new RoseColor[0]);

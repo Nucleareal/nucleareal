@@ -104,14 +104,16 @@ public class ItemWateringCan extends Item
 		{
 			int regencount = AnimalCrossing.NBT.incleaseValue("RegenRose");
 			int regencountM = AnimalCrossing.NBT.incleaseValue("RegenRose:"+world.getBlockMetadata(x, y, z));
-			player.triggerAchievement(Achievements.regenRose);
+			Achievements.triggerAchievement(player, Achievements.regenRose);
 			if(regencount > 100)
 			{
-				player.triggerAchievement(Achievements.regenManyRose);
+				Achievements.triggerAchievement(player, Achievements.regenManyRose);
 			}
 
 			BlockColorableFlower flower = (BlockColorableFlower)(Block.blocksList[world.getBlockId(x, y, z)]);
 			flower.respawn(world, x, y, z, AnimalCrossing.Rose.blockID);
+
+			player.swingItem();
 
 			ist.damageItem(1, player);
 			return true;

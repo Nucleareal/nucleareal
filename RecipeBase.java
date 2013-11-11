@@ -25,6 +25,11 @@ public abstract class RecipeBase implements IRecipe
 
 	public abstract ObjectPair<Boolean, ItemStack> getResult(InventoryCrafting ic);
 
+	protected ObjectPair<Boolean, ItemStack> successOf(ItemStack ist)
+	{
+		return new ObjectPair<Boolean, ItemStack>(Boolean.valueOf(true), ist);
+	}
+
 	@Override
 	public int getRecipeSize()
 	{

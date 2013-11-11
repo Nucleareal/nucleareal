@@ -78,15 +78,6 @@ public class ItemPachinko extends ItemBow
 	@Override
 	public void addInformation(ItemStack ist, EntityPlayer player, List list, boolean par4)
 	{
-		if(ist.getItemDamage() == ist.getMaxDamage())
-		{
-			list.add("Empty");
-		}
-		else
-		if(ist.getItemDamage() != 0)
-		{
-			list.add("Left: "+(ist.getMaxDamage() - ist.getItemDamage()));
-		}
 		super.addInformation(ist, player, list, par4);
 	}
 
@@ -192,7 +183,10 @@ public class ItemPachinko extends ItemBow
 	                world.spawnEntityInWorld(bullet);
 	            }
             }
-            ist.damageItem(1, player);
+            if(AnimalCrossing.PachinkoUsesBullet)
+            {
+            	ist.damageItem(1, player);
+            }
         }
     }
 

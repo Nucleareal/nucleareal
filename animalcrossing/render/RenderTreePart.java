@@ -27,7 +27,6 @@ public class RenderTreePart extends RenderFallingSand
 
 	public RenderTreePart()
 	{
-		System.out.println("Render Constructed");
 	}
 
 	@Override

@@ -18,6 +18,13 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class FurnitureLogicBase implements IBlockProxy
 {
+	private float[][] defaultRotations;
+
+	public FurnitureLogicBase()
+	{
+		init();
+	}
+
 	protected int getBlockID()
 	{
 		return AnimalCrossing.Furniture.blockID;
@@ -64,10 +71,15 @@ public class FurnitureLogicBase implements IBlockProxy
 		return false;
 	}
 
+	protected void init()
+	{
+		defaultRotations = createYAxisRotations(0F, 0F, 1F, 1F);
+	}
+
 	@Override
 	public void setBlockBounds(Block block, IBlockAccess world, int x, int y, int z)
 	{
-		block.setBlockBounds(0F, 0F, 0F, 1F, 1F, 1F);
+		block.setBlockBounds(defaultRotations[0][0], 0F, defaultRotations[0][1], defaultRotations[0][2], 1F, defaultRotations[0][3]);
 	}
 
 	@Override
@@ -139,5 +151,39 @@ public class FurnitureLogicBase implements IBlockProxy
 	public int getCollisionBoxesCount()
 	{
 		return 1;
+	}
+
+	private static final double rate = Math.PI / 2D;
+
+	protected float[][] createYAxisRotations(float xbegin, float zbegin, float xend, float zend)
+	{
+		float[][] Rotations = new float[4][];
+		xbegin	-= .5D;
+		zbegin	-= .5D;
+		xend	-= .5D;
+		zend	-= .5D;
+		for(int direction = 0; direction < 4; direction++)
+		{
+			double dirrate = rate*direction;
+			Rotations[direction] = new float[4];
+			Rotations[direction][0] = (float)( xbegin*Math.cos(dirrate) - zbegin*Math.sin(dirrate) ) + .5F;
+			Rotations[direction][1] = (float)( xbegin*Math.sin(dirrate) + zbegin*Math.cos(dirrate) ) + .5F;
+			Rotations[direction][2] = (float)( xend*Math.cos(dirrate) - zend*Math.sin(dirrate) ) + .5F;
+			Rotations[direction][3] = (float)( xend*Math.sin(dirrate) + zend*Math.cos(dirrate) ) + .5F;
+
+			if(Rotations[direction][0] > Rotations[direction][2])
+			{
+				float tmp = Rotations[direction][0];
+				Rotations[direction][0] = Rotations[direction][2];
+				Rotations[direction][2] = tmp;
+			}
+			if(Rotations[direction][1] > Rotations[direction][3])
+			{
+				float tmp = Rotations[direction][1];
+				Rotations[direction][1] = Rotations[direction][3];
+				Rotations[direction][3] = tmp;
+			}
+		}
+		return Rotations;
 	}
 }

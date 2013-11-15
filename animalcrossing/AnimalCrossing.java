@@ -70,7 +70,7 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 	@Mod.Instance("AnimalCrossing")
 	public static AnimalCrossing instance;
 
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	public static final String SPX = DEBUG ? "net.minecraft.src." : "";
 	public static final String CSD = SPX + "nucleareal.animalcrossing.client.ClientProxy";
 	public static final String SSD = SPX + "nucleareal.animalcrossing.CommonProxy";

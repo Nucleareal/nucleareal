@@ -6,6 +6,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemWateringCan;
+import net.minecraft.world.World;
 
 public class CommonProxy
 {
@@ -39,5 +40,10 @@ public class CommonProxy
 		{
 			player.inventory.addItemStackToInventory(new ItemStack(Item.glassBottle, waterbincount));
 		}
+	}
+
+	public World getClientWorld()
+	{
+		return null;
 	}
 }

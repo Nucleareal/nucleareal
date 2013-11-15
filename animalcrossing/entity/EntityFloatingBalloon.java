@@ -1,12 +1,9 @@
 package net.minecraft.src.nucleareal.animalcrossing.entity;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.src.nucleareal.UtilMinecraft;
-import net.minecraft.src.nucleareal.animalcrossing.AnimalCrossing;
 import net.minecraft.src.nucleareal.animalcrossing.Achievements;
+import net.minecraft.src.nucleareal.animalcrossing.AnimalCrossing;
+import net.minecraft.src.nucleareal.animalcrossing.BalloonType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
@@ -15,6 +12,7 @@ public class EntityFloatingBalloon extends EntityLiving
 	private double startMotionX;
 	private double startMotionZ;
 	private EntityFloatingChest Chest;
+	private BalloonType type;
 
 	public EntityFloatingBalloon(World world)
 	{
@@ -23,10 +21,16 @@ public class EntityFloatingBalloon extends EntityLiving
 
 	public EntityFloatingBalloon(World world, double posX, double posY, double posZ, EntityFloatingChest Chest)
 	{
+		this(world, posX, posY, posZ, Chest, BalloonType.Normal);
+	}
+
+	public EntityFloatingBalloon(World world, double posX, double posY, double posZ, EntityFloatingChest Chest, BalloonType type)
+	{
 		super(world);
-		setHealth(1F/20F);
+		setHealth(type.getLife()/20F);
 
 		this.Chest = Chest;
+		this.type = type;
 
 		ridingEntity = Chest;
 		Chest.riddenByEntity = this;
@@ -45,7 +49,7 @@ public class EntityFloatingBalloon extends EntityLiving
 	@Override
 	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
     {
-		Achievements.triggerAchievement(Achievements.shootedBalloon);
+		AnimalCrossing.NBT.incleaseValue("ShootedHitCount");
 		return super.attackEntityFrom(par1DamageSource, par2);
     }
 
@@ -61,5 +65,19 @@ public class EntityFloatingBalloon extends EntityLiving
 		{
 			setDead();
 		}
+	}
+
+	public void setDead()
+	{
+		super.setDead();
+	}
+
+	public void onDeathUpdate()
+	{
+		if(deathTime == 0)
+		{
+			Achievements.triggerAchievement(Achievements.shootedBalloon);
+		}
+		super.onDeathUpdate();
 	}
 }

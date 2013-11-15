@@ -47,9 +47,8 @@ public class ItemGreatFishingRod extends ItemFishingRod
 		if(ist.getItemDamage() == ist.getMaxDamage()) return ist;
 
 		int meta = -1;
-		if(AnimalCrossing.FishingRodUsesBait)
+		if(AnimalCrossing.FishingRodUsesBait && isUsing && !player.capabilities.isCreativeMode)
 		{
-
 			for(int i = 0; i < Bait.size(); i++)
 			{
 				if(UtilInventory.useItemStack(player, new ItemStack(AnimalCrossing.FishingBait, 1, i)))
@@ -100,14 +99,14 @@ public class ItemGreatFishingRod extends ItemFishingRod
 	@Override
 	public void addInformation(ItemStack ist, EntityPlayer player, List list, boolean par4)
 	{
-		if (ist.getItemDamage() == ist.getMaxDamage())
+		/*if (ist.getItemDamage() == ist.getMaxDamage())
 		{
 			list.add("Empty");
 		}
 		else if (ist.getItemDamage() != 0)
 		{
 			list.add("Left: " + (ist.getMaxDamage() - ist.getItemDamage()));
-		}
+		}*/
 		super.addInformation(ist, player, list, par4);
 	}
 

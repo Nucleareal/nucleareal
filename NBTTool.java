@@ -14,6 +14,7 @@ public class NBTTool
 	public NBTTool(String modname)
 	{
 		this.modname = modname;
+		Tag = new NBTTagCompound();
 		init();
 	}
 

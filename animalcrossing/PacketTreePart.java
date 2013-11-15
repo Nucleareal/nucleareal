@@ -150,8 +150,11 @@ public class PacketTreePart extends Packet
 	{
 		if (SpawnMap.containsKey(now.getVisualityValue())) return;
 
+		Block cb = Block.blocksList[UtilWorld.getBlockID(world, now)];
+		String cz = cb == null ? "!@#@!" : cb.getClass().getSimpleName();
+
 		if (UtilBlock.isEqualWoodBlocks(world, now, new Position(X, Y, Z)) ||
-				AnimalCrossing.isLeaf(UtilWorld.getBlockID(world, now), UtilWorld.getBlockMetadata(world, now)))
+				AnimalCrossing.isLeaf(UtilWorld.getBlockID(world, now), UtilWorld.getBlockMetadata(world, now), cz))
 		{
 			SpawnMap.put(now.getVisualityValue(), Boolean.valueOf(true));
 			DataMap.put(now.getVisualityValue(), String.format("%d:%d", UtilWorld.getBlockID(world, now), UtilWorld.getBlockMetadata(world, now)));

@@ -77,7 +77,7 @@ public class TickHandler implements IScheduledTickHandler, IPlayerTracker
 
 	private void tickInSpawnChests()
 	{
-		if(Player.worldObj.rand.nextInt(AnimalCrossing.BalloonSpawnChance) == 0 && isDistanced() && Player.worldObj.canBlockSeeTheSky((int)Player.posX, (int)Player.posY, (int)Player.posZ))
+		if(Player.worldObj.rand.nextInt(AnimalCrossing.BalloonSpawnChance) == 0 && isDistanced() && iplayerCanSeeTheSky())
 				{
 					Minecraft minecraft = ModLoader.getMinecraftInstance();
 
@@ -95,12 +95,16 @@ public class TickHandler implements IScheduledTickHandler, IPlayerTracker
 				}
 	}
 
+	private boolean iplayerCanSeeTheSky()
+	{
+		return Player.worldObj.canBlockSeeTheSky((int)Math.floor(Player.posX), (int)Math.floor(Player.posY), (int)Math.floor(Player.posZ));
+	}
+
 	private long beforeSpawnTime;
 
 	private boolean isDistanced()
 	{
-		return System.currentTimeMillis() - beforeSpawnTime > (1000 * 60) &&
-				!Player.worldObj.isRaining();
+		return System.currentTimeMillis() - beforeSpawnTime > (1000 * 60) && !Player.worldObj.isRaining();
 	}
 
 	private void tickInRunningSquid()
@@ -141,26 +145,33 @@ public class TickHandler implements IScheduledTickHandler, IPlayerTracker
 
 	private void tickInTree()
 	{
-		if(Player.worldObj.isRemote) return;
-
 		ItemStack ist = Player.getCurrentEquippedItem();
 
-		if((null != ist) && (ist.getItem() instanceof ItemAxe || AnimalCrossing.isAxeTool(ist)))
+		if(Player.worldObj.isRemote || ist == null || ist.getItem() == null || Block.blocksList[id] == null) return;
+
+		if(isValidTool(ist) && isStartBreakingBlock() && isValidWood(Block.blocksList[id]))
 		{
-			if(isStartBreakingBlock() && (Block.blocksList[id] instanceof BlockLog || AnimalCrossing.isWood(id, meta)))
-			{
-				Minecraft minecraft = ModLoader.getMinecraftInstance();
+			Minecraft minecraft = ModLoader.getMinecraftInstance();
 
-				PacketTreePart packet = new PacketTreePart(Player.username);
-				packet.X = x;
-				packet.Y = y;
-				packet.Z = z;
-				packet.blockID = id;
-				packet.metadata = meta;
+			PacketTreePart packet = new PacketTreePart(Player.username);
+			packet.X = x;
+			packet.Y = y;
+			packet.Z = z;
+			packet.blockID = id;
+			packet.metadata = meta;
 
-	            minecraft.getNetHandler().addToSendQueue(packet);
-			}
+            minecraft.getNetHandler().addToSendQueue(packet);
 		}
+	}
+
+	private boolean isValidTool(ItemStack ist)
+	{
+		return ist.getItem() instanceof ItemAxe || AnimalCrossing.isAxeTool(ist.itemID, ist.getItemDamage(), ist.getItem().getClass().getSimpleName());
+	}
+
+	private boolean isValidWood(Block block)
+	{
+		return block instanceof BlockLog || AnimalCrossing.isWood(id, meta, block.getClass().getSimpleName());
 	}
 
 	@Override

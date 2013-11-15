@@ -17,6 +17,8 @@ import net.minecraft.src.nucleareal.animalcrossing.render.RenderFishingFloat;
 import net.minecraft.src.nucleareal.animalcrossing.render.RenderFloatingBalloon;
 import net.minecraft.src.nucleareal.animalcrossing.render.RenderFloatingChest;
 import net.minecraft.src.nucleareal.animalcrossing.render.RenderTreePart;
+import net.minecraft.world.World;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -36,5 +38,11 @@ public class ClientProxy extends CommonProxy
 	@Override
 	public void onCrafting(EntityPlayer player, ItemStack item, IInventory m)
 	{
+	}
+
+	@Override
+	public World getClientWorld()
+	{
+		return FMLClientHandler.instance().getClient().theWorld;
 	}
 }

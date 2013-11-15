@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.src.nucleareal.UtilMinecraft;
+import net.minecraft.src.nucleareal.animalcrossing.AnimalCrossing;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
@@ -49,6 +50,7 @@ public class EntityFishingFloat extends EntityFishHook
 	@SideOnly(Side.CLIENT)
 	private double velocityZ;
 	private int meta;
+	private String playername;
 
 	public EntityFishingFloat(World world)
 	{
@@ -151,6 +153,14 @@ public class EntityFishingFloat extends EntityFishHook
 
 	public void onUpdate()
 	{
+		if(this.angler == null)
+		{
+			this.angler = UtilMinecraft.getWorldAndPlayer(playername == null ? "" : playername).getV2();
+		}
+		else
+		{
+			this.playername = this.angler.username;
+		}
 		if(super.angler == null)
 		{
 			super.angler = this.angler;
@@ -384,6 +394,7 @@ public class EntityFishingFloat extends EntityFishHook
 		par1NBTTagCompound.setByte("shake", (byte) shake);
 		par1NBTTagCompound.setByte("inGround", (byte) (inGround ? 1 : 0));
 		par1NBTTagCompound.setInteger("esameta", meta);
+		par1NBTTagCompound.setString("plynmee", playername);
 	}
 
 	public void readEntityFromNBT(NBTTagCompound par1NBTTagCompound)
@@ -395,6 +406,7 @@ public class EntityFishingFloat extends EntityFishHook
 		shake = par1NBTTagCompound.getByte("shake") & 255;
 		inGround = par1NBTTagCompound.getByte("inGround") == 1;
 		meta = par1NBTTagCompound.getInteger("esameta");
+		playername = par1NBTTagCompound.getString("plynmee");
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -454,7 +466,10 @@ public class EntityFishingFloat extends EntityFishHook
 	{
 		BiomeGenBase biome = world.getBiomeGenForCoords((int)Math.floor(posX), (int)Math.floor(posZ));
 		System.out.println("Biome:"+biome.biomeName);
-		return new ItemStack(Item.fishRaw);
+
+
+
+		return new ItemStack(AnimalCrossing.Fish, 1, 0);
 	}
 
 	public void setDead()

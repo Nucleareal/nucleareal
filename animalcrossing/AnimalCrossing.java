@@ -46,6 +46,7 @@ import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipeRoseDye;
 import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipeWateringCan;
 import net.minecraft.src.nucleareal.animalcrossing.render.RenderFurniture;
 import net.minecraft.src.nucleareal.animalcrossing.render.RenderRose;
+import net.minecraft.src.nucleareal.animalcrossing.untispacingchest.ACChestGuiHandler;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
@@ -58,6 +59,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -79,6 +81,7 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 	public static CommonProxy proxy;
 
 	public static final String CATEGORY_EFFECTIVES = "Effectives";
+	private static final String CATEGORY_GUI = "GuiID";
 
 	public static int WideSearchMax = 1000;
 
@@ -132,6 +135,8 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 	private static int Entity_FloatingChestID = 2;
 	private static int Entity_PachinkoBulletID = 3;
 	private static int Entity_FishingID = 4;
+
+	public static int FurnitureChestGuiID = 1222;
 
 	public static CreativeTabs AnimalCrossingTab;
 
@@ -375,6 +380,7 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 		LanguageRegistry.instance().addStringLocalization("entity.FishingFloat.name", "en_US", "FishingFloat");
 
 		new Achievements("AnimalCrossing").doRegister();
+		NetworkRegistry.instance().registerGuiHandler(this, new ACChestGuiHandler());
 	}
 
 	@Mod.PostInit
@@ -555,5 +561,7 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 		PachinkoUsesBullet = conf.get(conf.CATEGORY_GENERAL, "PachinkoUsesBullet", PachinkoUsesBullet).getBoolean(PachinkoUsesBullet);
 		FishingRodUsesBait = conf.get(conf.CATEGORY_GENERAL, "FishingRodUsesBait", FishingRodUsesBait).getBoolean(FishingRodUsesBait);
 		isLampPoweredBySignal = conf.get(conf.CATEGORY_GENERAL, "LampPoweredBySignal", isLampPoweredBySignal).getBoolean(isLampPoweredBySignal);
+
+		FurnitureChestGuiID = conf.get(CATEGORY_GUI, "FurnitureChestGuiID", FurnitureChestGuiID).getInt();
 	}
 }

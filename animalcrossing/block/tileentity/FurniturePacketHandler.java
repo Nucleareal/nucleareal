@@ -26,7 +26,7 @@ public class FurniturePacketHandler implements IPacketHandler
 		int x = tile.xCoord;
 		int y = tile.yCoord;
 		int z = tile.zCoord;
-		int meta = tile.getMetadata();
+		int meta = tile.getFurnitureIndex();
 		int rotation = tile.getRotation();
 		boolean isLighting = tile.getLighting();
 

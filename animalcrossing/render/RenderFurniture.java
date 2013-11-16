@@ -35,7 +35,7 @@ public class RenderFurniture extends TileEntitySpecialRenderer implements ISimpl
 		int uid = tile.worldObj.getBlockId(tile.xCoord, tile.yCoord-1, tile.zCoord);
 		if(uid == AnimalCrossing.Furniture.blockID)
 		{
-			EnumFurniture under = EnumFurniture.of(((TileEntityFurniture)tile.worldObj.getBlockTileEntity(tile.xCoord, tile.yCoord-1, tile.zCoord)).getMetadata());
+			EnumFurniture under = EnumFurniture.of(((TileEntityFurniture)tile.worldObj.getBlockTileEntity(tile.xCoord, tile.yCoord-1, tile.zCoord)).getFurnitureIndex());
 			subY = under.getSubtractYParam();
 		}
 

@@ -1,14 +1,17 @@
 package net.minecraft.src.nucleareal.animalcrossing.block.tileentity;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.src.nucleareal.animalcrossing.AnimalCrossing;
+import net.minecraft.src.nucleareal.animalcrossing.untispacingchest.AnimalCrossingChest;
 import net.minecraft.tileentity.TileEntity;
 
-public class TileEntityFurniture extends TileEntity
+public class TileEntityFurniture extends TileEntity implements IInventory
 {
 	private int metadata;
 	private int rotation;
@@ -58,11 +61,6 @@ public class TileEntityFurniture extends TileEntity
     	livingcount++;
     }
 
-	public int getMetadata()
-	{
-		return metadata;
-	}
-
 	public float getBlockRotation(int i)
 	{
 		return (float)(90D*rotation);
@@ -111,5 +109,78 @@ public class TileEntityFurniture extends TileEntity
 	public int getLivingCount()
 	{
 		return livingcount;
+	}
+
+	/* IInventory Methods */
+
+	public int getSizeInventory()
+	{
+		return AnimalCrossingChest.get().getSizeInventory();
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int i)
+	{
+		return AnimalCrossingChest.get().getStackInSlot(i);
+	}
+
+	@Override
+	public ItemStack decrStackSize(int i, int j)
+	{
+		return AnimalCrossingChest.get().decrStackSize(i, j);
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int i)
+	{
+		return AnimalCrossingChest.get().getStackInSlotOnClosing(i);
+	}
+
+	@Override
+	public void setInventorySlotContents(int i, ItemStack ist)
+	{
+		AnimalCrossingChest.get().setInventorySlotContents(i, ist);
+	}
+
+	@Override
+	public String getInvName()
+	{
+		return AnimalCrossingChest.get().getInvName();
+	}
+
+	@Override
+	public boolean isInvNameLocalized()
+	{
+		return AnimalCrossingChest.get().isInvNameLocalized();
+	}
+
+	@Override
+	public int getInventoryStackLimit()
+	{
+		return AnimalCrossingChest.get().getInventoryStackLimit();
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer entityplayer)
+	{
+		return AnimalCrossingChest.get().isUseableByPlayer(entityplayer);
+	}
+
+	@Override
+	public void openChest()
+	{
+		AnimalCrossingChest.get().openChestAt(worldObj, xCoord, yCoord, zCoord);
+	}
+
+	@Override
+	public void closeChest()
+	{
+		AnimalCrossingChest.get().closeChestAt(worldObj, xCoord, yCoord, zCoord);
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int i, ItemStack itemstack)
+	{
+		return AnimalCrossingChest.get().isItemValidForSlot(i, itemstack);
 	}
 }

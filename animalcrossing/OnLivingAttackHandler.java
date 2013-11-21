@@ -53,8 +53,6 @@ public class OnLivingAttackHandler
 
 	private boolean isSword(ItemStack ist)
 	{
-		return 	ist.getItem() instanceof ItemSword
-				||
-				AnimalCrossing.isSword(ist.itemID, ist.getItemDamage(), ist.getItem().getClass().getSimpleName());
+		return AnimalCrossing.isSword(ist.itemID, ist.getItemDamage(), ist.getItem().getClass().getSimpleName());
 	}
 }

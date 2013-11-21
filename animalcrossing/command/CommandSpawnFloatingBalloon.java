@@ -13,13 +13,13 @@ public class CommandSpawnFloatingBalloon extends CommandBase
 	@Override
 	public String getCommandName()
 	{
-		return "SpawnFloatingBalloon";
+		return "acspawnfloating";
 	}
 
 	@Override
 	public String getCommandUsage(ICommandSender icommandsender)
 	{
-		return "Unknown";
+		return "unknown";
 	}
 
 	@Override

@@ -5,7 +5,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileEntityFurniture;
+import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileFurniture;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -33,7 +33,7 @@ public class LogicMonoSofa extends FurnitureLogicBase
 
 	public void setBlockBounds(Block block, IBlockAccess world, int x, int y, int z)
 	{
-		TileEntityFurniture tile = getTile(world, x, y, z);
+		TileFurniture tile = getTile(world, x, y, z);
 
 		int rotate = tile.getRotation();
 
@@ -49,7 +49,7 @@ public class LogicMonoSofa extends FurnitureLogicBase
 	@Override
 	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axis, List list, Entity entity, int layer)
 	{
-		TileEntityFurniture tile = getTile(world, x, y, z);
+		TileFurniture tile = getTile(world, x, y, z);
 
 		int rotate = tile.getRotation();
 

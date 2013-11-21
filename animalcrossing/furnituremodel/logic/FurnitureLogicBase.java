@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.src.nucleareal.UtilMinecraft;
 import net.minecraft.src.nucleareal.animalcrossing.AnimalCrossing;
-import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileEntityFurniture;
+import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileFurniture;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Direction;
 import net.minecraft.world.IBlockAccess;
@@ -118,14 +118,14 @@ public class FurnitureLogicBase implements IBlockProxy
         return par0 & 3;
     }
 
-    protected TileEntityFurniture getTile(World world, int x, int y, int z)
+    protected TileFurniture getTile(World world, int x, int y, int z)
 	{
 		return getTile((IBlockAccess)world, x, y, z);
 	}
 
-    protected TileEntityFurniture getTile(IBlockAccess world, int x, int y, int z)
+    protected TileFurniture getTile(IBlockAccess world, int x, int y, int z)
     {
-    	return (TileEntityFurniture)world.getBlockTileEntity(x, y, z);
+    	return (TileFurniture)world.getBlockTileEntity(x, y, z);
     }
 
 	public void onNeighborBlockChange(World world, int x, int y, int z, int side)

@@ -2,7 +2,7 @@ package net.minecraft.src.nucleareal.animalcrossing.furnituremodel.logic;
 
 import net.minecraft.block.Block;
 import net.minecraft.src.nucleareal.animalcrossing.AnimalCrossing;
-import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileEntityFurniture;
+import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileFurniture;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -11,7 +11,7 @@ public class LogicMonoWallClock extends FurnitureLogicBase
 {
 	public void setBlockBounds(Block block, IBlockAccess world, int x, int y, int z)
 	{
-		TileEntityFurniture tile = getTile(world, x, y, z);
+		TileFurniture tile = getTile(world, x, y, z);
 		switch(tile.getRotation())
 		{
 			case 0: block.setBlockBounds(0F, 0F, 0F, 1F, 1F, 1F/8F); break;
@@ -22,7 +22,7 @@ public class LogicMonoWallClock extends FurnitureLogicBase
 	}
 	public boolean canStayInThisPosition(World world, int x, int y, int z)
 	{
-		TileEntityFurniture tile = getTile(world, x, y, z);
+		TileFurniture tile = getTile(world, x, y, z);
 		switch(tile.getRotation())
 		{
 			case 0: return !world.isAirBlock(x, y, z-1); //ZPos

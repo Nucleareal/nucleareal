@@ -1,13 +1,12 @@
-﻿package net.minecraft.src.nucleareal.animalcrossing.furnituremodel;
+package net.minecraft.src.nucleareal.animalcrossing.furnituremodel;
 
 import java.util.Arrays;
 import java.util.List;
 
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.src.nucleareal.ModelNuclearealBase;
-import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileEntityFurniture;
+import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileFurniture;
 
 public class ModelMonoWallClock extends ModelNuclearealBase
 {
@@ -41,7 +40,8 @@ public class ModelMonoWallClock extends ModelNuclearealBase
 		setRotation(HourN, 0F, 0F, 0F);
 	}
 
-	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
+	public void render(Entity entity, float f, float f1, float f2, float f3,
+			float f4, float f5)
 	{
 		super.render(entity, f, f1, f2, f3, f4, f5);
 		setRotationAngles(f, f1, f2, f3, f4, f5, entity);
@@ -64,15 +64,15 @@ public class ModelMonoWallClock extends ModelNuclearealBase
 	}
 
 	@Override
-	protected void onPreRender(TileEntityFurniture tile)
+	protected void onPreRender(TileFurniture tile)
 	{
 		long l = tile.worldObj.getWorldInfo().getWorldTime() % 24000L;
-		double hr = ((l / 1000L) / 24D	) * Math.PI * 2D;
-		double mr = (int)((l % 1000L)*(60D / 1000D)) * (Math.PI * 2D / 60D);
-		setRotation(MinuteN	, 0F, 0F, (float)mr);
-		setRotation(HourN	, 0F, 0F, (float)hr);
-		//1Day		= 24000
-		//1Hour		= 24000 / 24
-		//1Minute	= 24000 / 24 / 60
+		double hr = ((l / 1000L) / 24D) * Math.PI * 2D;
+		double mr = (int) ((l % 1000L) * (60D / 1000D)) * (Math.PI * 2D / 60D);
+		setRotation(MinuteN, 0F, 0F, (float) mr);
+		setRotation(HourN, 0F, 0F, (float) hr);
+		// 1Day = 24000
+		// 1Hour = 24000 / 24
+		// 1Minute = 24000 / 24 / 60
 	}
 }

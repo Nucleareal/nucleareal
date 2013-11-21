@@ -10,9 +10,10 @@ public class ACChestGuiHandler implements IGuiHandler
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
 	{
-		if(ID == AnimalCrossing.FurnitureChestGuiID)
+		if (ID == AnimalCrossing.FurnitureChestGuiID)
 		{
-			return new ContainerACChest(player.inventory, AnimalCrossingChest.get().getActivePage());
+			return new ContainerACChest(player.inventory, AnimalCrossingChest
+					.get().getActivePage());
 		}
 		return null;
 	}
@@ -20,9 +21,10 @@ public class ACChestGuiHandler implements IGuiHandler
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
 	{
-		if(ID == AnimalCrossing.FurnitureChestGuiID)
+		if (ID == AnimalCrossing.FurnitureChestGuiID)
 		{
-			return new GuiACChest(player, AnimalCrossingChest.get().getActivePage(), world, x, y, z);
+			return new GuiACChest(player, AnimalCrossingChest.get()
+					.getActivePage(), world, x, y, z);
 		}
 		return null;
 	}

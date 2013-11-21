@@ -159,4 +159,9 @@ public enum EnumFurniture
 	{
 		return furniturelogic.getCollisionBoxesCount();
 	}
+
+	public int getValueBuy()
+	{
+		return 1000;
+	}
 }

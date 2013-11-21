@@ -5,6 +5,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.src.nucleareal.UtilMinecraft;
 import net.minecraft.src.nucleareal.animalcrossing.AnimalCrossing;
 import net.minecraft.world.World;
 
@@ -46,14 +47,12 @@ public class AnimalCrossingChest implements IInventory
 	@Override
 	public int getSizeInventory()
 	{
-		return getSizePage()*getSizePages();
+		return getSizePage() * getSizePages();
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int i)
 	{
-		//System.out.println(String.format("getStackInSlot, Index:%d, y:%d, x:%d", i, i/getSizePage(), i%getSizePage()));
-
 		return contents[i / getSizePage()][i % getSizePage()];
 	}
 
@@ -85,7 +84,7 @@ public class AnimalCrossingChest implements IInventory
 	@Override
 	public void setInventorySlotContents(int i, ItemStack ist)
 	{
-		setInventorySlotContents(i/getSizePage(), i%getSizePage(), ist);
+		setInventorySlotContents(i / getSizePage(), i % getSizePage(), ist);
 	}
 
 	public void setInventorySlotContents(int page, int slot, ItemStack ist)
@@ -135,12 +134,23 @@ public class AnimalCrossingChest implements IInventory
 	public void openChestAt(World world, int x, int y, int z)
 	{
 		readFromNBT();
+
+		world = UtilMinecraft.getWorldAndPlayer("").getV1();
+
+		world.playSoundEffect(x + .5D, y + .5D, z + .5D, "random.chestopen", 0.5F, world.rand.nextFloat() * 0.1F + 0.9F);
+		world.playSoundEffect(x + .5D, y + .5D, z + .5D, "tile.piston.out", 0.5F, world.rand.nextFloat() * 0.25F + 0.6F);
+
 	}
 
 	public void closeChestAt(World world, int x, int y, int z)
 	{
 		writeToNBT();
 		setActivePage(0);
+
+		world = UtilMinecraft.getWorldAndPlayer("").getV1();
+
+		world.playSoundEffect(x + .5D, y + .5D, z + .5D, "random.chestclosed", 0.5F, world.rand.nextFloat() * 0.1F + 0.9F);
+		world.playSoundEffect(x + .5D, y + .5D, z + .5D, "tile.piston.in", 0.5F, world.rand.nextFloat() * 0.15F + 0.6F);
 	}
 
 	@Override
@@ -169,10 +179,10 @@ public class AnimalCrossingChest implements IInventory
 		NBTTagCompound NBT = AnimalCrossing.NBT.getTagCompound();
 		NBTTagList tags = new NBTTagList();
 
-		for(int i = 0; i < getSizeInventory(); i++)
+		for (int i = 0; i < getSizeInventory(); i++)
 		{
 			ItemStack ist = getStackInSlot(i);
-			if(ist != null)
+			if (ist != null)
 			{
 				NBTTagCompound itemtag = new NBTTagCompound();
 				itemtag.setInteger("Page", getPageFromIndex(i));
@@ -211,7 +221,7 @@ public class AnimalCrossingChest implements IInventory
 
 	public void setActivePage(int page)
 	{
-		if(page < 0) page += getSizePages();
+		if (page < 0) page += getSizePages();
 		this.page = page % getSizePages();
 	}
 

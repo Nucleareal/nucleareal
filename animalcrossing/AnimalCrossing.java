@@ -8,9 +8,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLeaves;
+import net.minecraft.block.BlockLog;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.src.nucleareal.ConfigurationCreator;
 import net.minecraft.src.nucleareal.IConfigurationLoader;
 import net.minecraft.src.nucleareal.NBTTool;
@@ -20,23 +28,39 @@ import net.minecraft.src.nucleareal.ObjectTriple;
 import net.minecraft.src.nucleareal.Position;
 import net.minecraft.src.nucleareal.animalcrossing.block.BlockColorableFlower;
 import net.minecraft.src.nucleareal.animalcrossing.block.BlockFurniture;
+import net.minecraft.src.nucleareal.animalcrossing.block.BlockInukichi;
+import net.minecraft.src.nucleareal.animalcrossing.block.BlockInukichiDoor;
+import net.minecraft.src.nucleareal.animalcrossing.block.BlockMyDesign;
+import net.minecraft.src.nucleareal.animalcrossing.block.BlockRemoveProtectedStairs;
 import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.EnumFurniture;
 import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.FurniturePacketHandler;
-import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileEntityFurniture;
+import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileFurniture;
 import net.minecraft.src.nucleareal.animalcrossing.entity.EntityFallingTreePart;
 import net.minecraft.src.nucleareal.animalcrossing.entity.EntityFishingFloat;
 import net.minecraft.src.nucleareal.animalcrossing.entity.EntityFloatingBalloon;
 import net.minecraft.src.nucleareal.animalcrossing.entity.EntityFloatingChest;
+import net.minecraft.src.nucleareal.animalcrossing.entity.EntityInukichi;
 import net.minecraft.src.nucleareal.animalcrossing.entity.EntityPachinkoBullet;
+import net.minecraft.src.nucleareal.animalcrossing.inukichi.InukichiInteractHandler;
+import net.minecraft.src.nucleareal.animalcrossing.inukichi.sell.InukichiSellHandler;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemColorableFlower;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemFish;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemFishingBait;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemFlowerDyePowder;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemFurniture;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemGreatFishingRod;
+import net.minecraft.src.nucleareal.animalcrossing.item.ItemInukichi;
+import net.minecraft.src.nucleareal.animalcrossing.item.ItemInukichiDoor;
+import net.minecraft.src.nucleareal.animalcrossing.item.ItemMyDesign;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemNugget;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemPachinko;
+import net.minecraft.src.nucleareal.animalcrossing.item.ItemShopCompass;
 import net.minecraft.src.nucleareal.animalcrossing.item.ItemWateringCan;
+import net.minecraft.src.nucleareal.animalcrossing.maplesisters.EntityMapleAkaha;
+import net.minecraft.src.nucleareal.animalcrossing.maplesisters.EntityMapleKiyo;
+import net.minecraft.src.nucleareal.animalcrossing.maplesisters.MapleSistersInteractHandler;
+import net.minecraft.src.nucleareal.animalcrossing.maplesisters.OnMapleSistersAttackHandler;
+import net.minecraft.src.nucleareal.animalcrossing.maplesisters.mydesign.MyDesignEditGuiHandler;
 import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipeFish;
 import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipeFishingBait;
 import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipeFishingRod;
@@ -45,6 +69,7 @@ import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipePachinko;
 import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipeRoseDye;
 import net.minecraft.src.nucleareal.animalcrossing.recipe.RecipeWateringCan;
 import net.minecraft.src.nucleareal.animalcrossing.render.RenderFurniture;
+import net.minecraft.src.nucleareal.animalcrossing.render.RenderMyDesign;
 import net.minecraft.src.nucleareal.animalcrossing.render.RenderRose;
 import net.minecraft.src.nucleareal.animalcrossing.untispacingchest.ACChestGuiHandler;
 import net.minecraft.world.World;
@@ -80,8 +105,9 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 	@SidedProxy(clientSide = CSD, serverSide = SSD)
 	public static CommonProxy proxy;
 
-	public static final String CATEGORY_EFFECTIVES = "Effectives";
+	private static final String CATEGORY_EFFECTIVES = "Effectives";
 	private static final String CATEGORY_GUI = "GuiID";
+	private static final String CATEGORY_DEBUG = "DEBUG";
 
 	public static int WideSearchMax = 1000;
 
@@ -110,7 +136,12 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 	public static Item FishingRodGold; public static int FishingRodGoldID = 24302;
 	public static Item FishingBait; public static int FishingBaitID = 0;
 	public static Item Fish; public static int FishID = 24293;
+	public static Item ShopCompass; public static int ShopCompassID = 0;
 	public static Block Furniture; public static Item FurnitureItem; public static int FurnitureID = 1222; public static int FurnitureRenderID = -1;
+	public static Block InukichiDoor; public static Item InukichiDoorItem; public static int InukichiDoorID = 1223;
+	public static Block Inukichi; public static Item InukichiItem; public static int InukichiID = 1224;
+	public static Block InukichiStair; public static Item InukichiStairItem; public static int InukichiStairID = 1225;
+	public static Block MyDesign; public static Item MyDesignItem; public static int MyDesignID = 1226; public static int MyDesignRenderID = -1;
 
 	public static HashMap<String, ObjectTriple<ArrayList<ItemStack>, ArrayList<ItemStack>, Integer>> OreDictMap;
 
@@ -129,14 +160,20 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 	public static boolean PachinkoUsesBullet = false;
 	public static boolean FishingRodUsesBait = false;
 	public static boolean isLampPoweredBySignal = true;
+	public static boolean isChestForceEnabled = false;
 
 	private static int Entity_FallingBlockID = 0;
 	private static int Entity_FloatingBalloonnID = 1;
 	private static int Entity_FloatingChestID = 2;
 	private static int Entity_PachinkoBulletID = 3;
 	private static int Entity_FishingID = 4;
+	private static int Entity_InukichiID = 5;
+	private static int Entity_MapleAkahaID = 6;
+	private static int Entity_MapleKiyoID = 7;
 
 	public static int FurnitureChestGuiID = 1222;
+	public static int MyDesignEditGuiID = 1226;
+	public static int InukichiSellGuiID = 0;
 
 	public static CreativeTabs AnimalCrossingTab;
 
@@ -178,6 +215,7 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 		MinecraftForge.EVENT_BUS.register(new OreDictionaryHandler());
 		MinecraftForge.EVENT_BUS.register(new PickupHandler());
 		MinecraftForge.EVENT_BUS.register(new OnLivingAttackHandler());
+		MinecraftForge.EVENT_BUS.register(new OnMapleSistersAttackHandler());
 
 		GameRegistry.registerCraftingHandler(new CreateWateringCanHandler());
 		GameRegistry.registerCraftingHandler(new CraftingHandler());
@@ -189,6 +227,8 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 		AnimalCrossingTab = new AnimalCrossingTab("Animal Crossing");
 		LanguageRegistry.instance().addStringLocalization("itemGroup.Animal Crossing", "en_US", "Animal Crossing");
 		LanguageRegistry.instance().addStringLocalization("itemGroup.Animal Crossing", "ja_JP", "どうぶつの森");
+
+		LocalizeWords.addTransision();
 
 		if(isValidBlockID(RoseID))
 		{
@@ -244,7 +284,52 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 
 			RenderingRegistry.registerBlockHandler(renderer);
 
-			ClientRegistry.registerTileEntity(TileEntityFurniture.class, "Furniture", renderer);
+			ClientRegistry.registerTileEntity(TileFurniture.class, "Furniture", renderer);
+		}
+
+		if(isValidBlockID(InukichiDoorID))
+		{
+			InukichiDoor = new BlockInukichiDoor(InukichiDoorID).setUnlocalizedName("InukichiDoor").setTextureName("door_iron").setStepSound(Block.soundMetalFootstep).setBlockUnbreakable()
+					.setResistance(Float.MAX_VALUE);
+			GameRegistry.registerBlock(InukichiDoor, ItemInukichiDoor.class, "InukichiDoor", "AnimalCrossing");
+			InukichiDoorItem = new ItemInukichiDoor(InukichiDoorID-256, InukichiDoor).setUnlocalizedName("ItemInukichiDoor").setTextureName("door_iron");
+			GameRegistry.registerItem(InukichiDoorItem, "InukichiDoorItem", "AnimalCrossing");
+			LanguageRegistry.instance().addNameForObject(new ItemStack(InukichiDoorItem), "en_US", "Inukichi Door");
+		}
+		if(isValidBlockID(InukichiID))
+		{
+			Inukichi = new BlockInukichi(InukichiID).setUnlocalizedName("Inukichi").setTextureName("nc:B_Inukichi").setStepSound(Block.soundStoneFootstep).setBlockUnbreakable()
+					.setResistance(Float.MAX_VALUE);
+			GameRegistry.registerBlock(Inukichi, ItemInukichi.class, "Inukichi", "AnimalCrossing");
+			InukichiItem = new ItemInukichi(InukichiID - 256, Inukichi).setUnlocalizedName("Inukichi").setTextureName("nc:B_Inukichi");
+			GameRegistry.registerItem(InukichiItem, "InukichiItem", "AnimalCrossing");
+
+			for(int i = 0; i < 16; i++)
+			{
+				LanguageRegistry.instance().addNameForObject(new ItemStack(InukichiItem, 1, i), "en_US", "Inukichi "+BlockInukichi.getDisplayName(i));
+			}
+		}
+		if(isValidBlockID(InukichiID) && isValidBlockID(InukichiStairID))
+		{
+			InukichiStair = new BlockRemoveProtectedStairs(InukichiStairID, Inukichi, BlockInukichi.getStairMetadata())
+			.setUnlocalizedName("Inukichi").setTextureName("nc:B_Inukichi").setStepSound(Block.soundStoneFootstep).setBlockUnbreakable().setResistance(Float.MAX_VALUE);
+			GameRegistry.registerBlock(InukichiStair, ItemBlock.class, "InukichiStair", "AnimalCrossing");
+
+			GameRegistry.registerWorldGenerator(new GeneratorInukichiShop());
+		}
+		if(isValidBlockID(MyDesignID))
+		{
+			MyDesign = new BlockMyDesign(MyDesignID).setUnlocalizedName("MyDesign").setTextureName("nc:B_Furniture").setStepSound(Block.soundMetalFootstep).setHardness(1/24F);
+			GameRegistry.registerBlock(MyDesign, ItemMyDesign.class, "MyDesign", "AnimalCrossing");
+
+			for(int i = 0; i < 16; i++)
+			{
+				LanguageRegistry.instance().addNameForObject(new ItemStack(MyDesign, 1, i), "en_US", "MyDesign "+(i+1));
+			}
+
+			MyDesignRenderID = RenderingRegistry.getNextAvailableRenderId();
+			RenderMyDesign render = new RenderMyDesign();
+			RenderingRegistry.registerBlockHandler(render);
 		}
 
 		if(isValidItemID(RoseDyeID))
@@ -365,11 +450,26 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 			}
 		}
 
+		if(isValidItemID(ShopCompassID))
+		{
+			ShopCompass = new ItemShopCompass(ShopCompassID).setUnlocalizedName("ItemShopCompass").setTextureName("nc:compass");
+			GameRegistry.registerItem(ShopCompass, "ShopCompass", "AnimalCrossing");
+
+			LanguageRegistry.addName(ShopCompass, "Shop Compass");
+		}
+
+		EntityRegistry.registerGlobalEntityID(EntityInukichi.class, "Inukichi", Entity_InukichiID, 0, 0);
+		EntityRegistry.registerGlobalEntityID(EntityMapleAkaha.class, "MapleAkaha", Entity_MapleAkahaID, 0xFF0000, 0xFF0000);
+		EntityRegistry.registerGlobalEntityID(EntityMapleKiyo.class, "MapleKiyo", Entity_MapleKiyoID, 0xFF7F00, 0xFF7F00);
+
 		EntityRegistry.registerModEntity(EntityFallingTreePart.class, "TreePart", Entity_FallingBlockID, this, 250, 5, true);
 		EntityRegistry.registerModEntity(EntityFloatingBalloon.class, "FloatingBalloon", Entity_FloatingBalloonnID, this, 250, 5, true);
 		EntityRegistry.registerModEntity(EntityFloatingChest.class, "FloatingChest", Entity_FloatingChestID, this, 250, 5, true);
 		EntityRegistry.registerModEntity(EntityPachinkoBullet.class, "PachinkoBullet", Entity_PachinkoBulletID, this, 250, 5, true);
 		EntityRegistry.registerModEntity(EntityFishingFloat.class, "FishingFloat", Entity_FishingID, this, 250, 5, true);
+		EntityRegistry.registerModEntity(EntityInukichi.class, "Inukichi", Entity_InukichiID, this, 250, 5, true);
+		EntityRegistry.registerModEntity(EntityMapleAkaha.class, "MapleAkaha", Entity_MapleAkahaID, this, 250, 5, true);
+		EntityRegistry.registerModEntity(EntityMapleKiyo.class, "MapleKiyo", Entity_MapleKiyoID, this, 250, 5, true);
 
 		proxy.registerRenderers();
 
@@ -378,9 +478,20 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 		LanguageRegistry.instance().addStringLocalization("entity.FloatingChest.name", "en_US", "FloatingChest");
 		LanguageRegistry.instance().addStringLocalization("entity.PachinkoBullet.name", "en_US", "PachinkoBullet");
 		LanguageRegistry.instance().addStringLocalization("entity.FishingFloat.name", "en_US", "FishingFloat");
+		LanguageRegistry.instance().addStringLocalization("entity.Inukichi.name", "en_US", "Inukichi");
+		LanguageRegistry.instance().addStringLocalization("entity.MapleAkaha.name", "en_US", "MapleAkaha");
+		LanguageRegistry.instance().addStringLocalization("entity.MapleKiyo.name", "en_US", "MapleKiyo");
 
 		new Achievements("AnimalCrossing").doRegister();
-		NetworkRegistry.instance().registerGuiHandler(this, new ACChestGuiHandler());
+
+		NetworkRegistry.instance().registerGuiHandler(this, new ACGuiHandler());
+		ACGuiHandler.registerHandler(Integer.valueOf(FurnitureChestGuiID), new ACChestGuiHandler());
+		ACGuiHandler.registerHandler(Integer.valueOf(MyDesignEditGuiID), new ACChestGuiHandler());
+		ACGuiHandler.registerHandler(Integer.valueOf(InukichiSellGuiID), new InukichiSellHandler());
+
+		MinecraftForge.EVENT_BUS.register(new ACWorldLastHandler());
+		MinecraftForge.EVENT_BUS.register(new InukichiInteractHandler());
+		MinecraftForge.EVENT_BUS.register(new MapleSistersInteractHandler());
 	}
 
 	@Mod.PostInit
@@ -468,6 +579,11 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 		}
 	}
 
+	public static TileFurniture getTileFurniture(World world, int x, int y, int z)
+	{
+		return ((BlockFurniture)Furniture).getTile(world, x, y, z);
+	}
+
 	private List<String> loadEffectives(Configuration conf, String desc, String defValue, HashMap<String, NullValue> list)
 	{
 		String ids		= conf.get(CATEGORY_EFFECTIVES, desc, defValue).getString();
@@ -506,22 +622,22 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 
 	public static boolean isAxeTool(int id, int meta, String clanme)
 	{
-		return 	isEffective(id, meta, AxeList, axeClass, clanme);
+		return 	isEffective(id, meta, AxeList, axeClass, clanme) || Item.itemsList[id] instanceof ItemAxe;
 	}
 
 	public static boolean isWood(int id, int meta, String clanme)
 	{
-		return 	isEffective(id, meta, WoodList, woodClass, clanme);
+		return 	isEffective(id, meta, WoodList, woodClass, clanme) || Block.blocksList[id] instanceof BlockLog;
 	}
 
 	public static boolean isLeaf(int id, int meta, String clanme)
 	{
-		return	isEffective(id, meta, LeafList, leafClass, clanme);
+		return	isEffective(id, meta, LeafList, leafClass, clanme) || Block.blocksList[id] instanceof BlockLeaves;
 	}
 
 	public static boolean isSword(int id, int meta, String clanme)
 	{
-		return	isEffective(id, meta, SwordList, swordClass, clanme);
+		return	isEffective(id, meta, SwordList, swordClass, clanme) || Item.itemsList[id] instanceof ItemSword;
 	}
 
 	public void onLoad(Configuration conf)
@@ -534,6 +650,10 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 		RoseID = conf.get(conf.CATEGORY_BLOCK, "RoseID", RoseID).getInt();
 		RoseWitherID = conf.get(conf.CATEGORY_BLOCK, "RoseWitherID", RoseWitherID).getInt();
 		FurnitureID = conf.get(conf.CATEGORY_BLOCK, "FurnitureID", FurnitureID).getInt();
+		InukichiDoorID = conf.get(conf.CATEGORY_BLOCK, "InukichiDoorID", InukichiDoorID).getInt();
+		InukichiID = conf.get(conf.CATEGORY_BLOCK, "InukichiID", InukichiID).getInt();
+		InukichiStairID = conf.get(conf.CATEGORY_BLOCK, "InukichiStairID", InukichiStairID).getInt();
+		MyDesignID = conf.get(conf.CATEGORY_BLOCK, "MyDesignBlockID", MyDesignID).getInt();
 
 		RoseDyeID = conf.get(conf.CATEGORY_ITEM, "RoseDyeID", RoseDyeID).getInt();
 		NuggetsID = conf.get(conf.CATEGORY_ITEM, "NuggetsID", NuggetsID).getInt();
@@ -544,6 +664,7 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 
 		FishingBaitID = conf.get(conf.CATEGORY_ITEM, "FishingBaitID", FishingBaitID).getInt();
 		FishID = conf.get(conf.CATEGORY_ITEM, "FishID", FishID).getInt();
+		if(new Object()==null) ShopCompassID = conf.get(conf.CATEGORY_ITEM, "ShopCompassID", ShopCompassID).getInt();
 
 		RoseSpawnChance = conf.get("Chance", "RoseSpawnDenominator", RoseSpawnChance).getInt();
 		RoseDeadChance = conf.get("Chance", "RoseDespawnDenominator", RoseDeadChance).getInt();
@@ -563,5 +684,9 @@ public class AnimalCrossing extends NuclearealBase implements IConfigurationLoad
 		isLampPoweredBySignal = conf.get(conf.CATEGORY_GENERAL, "LampPoweredBySignal", isLampPoweredBySignal).getBoolean(isLampPoweredBySignal);
 
 		FurnitureChestGuiID = conf.get(CATEGORY_GUI, "FurnitureChestGuiID", FurnitureChestGuiID).getInt();
+		MyDesignEditGuiID = conf.get(CATEGORY_GUI, "MyDesignEditGuiID", MyDesignEditGuiID).getInt();
+		InukichiSellGuiID = conf.get(CATEGORY_GUI, "InukichiSellGuiID", InukichiSellGuiID).getInt();
+
+		isChestForceEnabled = conf.get(CATEGORY_DEBUG, "isChestForceEnabled", isChestForceEnabled).getBoolean(isChestForceEnabled);
 	}
 }

@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.src.nucleareal.UtilMinecraft;
 import net.minecraft.src.nucleareal.animalcrossing.AnimalCrossing;
-import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileEntityFurniture;
+import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileFurniture;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -26,7 +26,7 @@ public class LogicMonoLamp extends FurnitureLogicBase
 
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i, float fx, float fy, float fz)
 	{
-		TileEntityFurniture tile = getTile(world, x, y, z);
+		TileFurniture tile = getTile(world, x, y, z);
 
 		tile.changeLighting();
 

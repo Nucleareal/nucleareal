@@ -1,7 +1,5 @@
 package net.minecraft.src.nucleareal.animalcrossing.untispacingchest;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -35,7 +33,7 @@ public class ContainerACChest extends Container
 		{
 			for (int x = 0; x < AnimalCrossingChest.get().getXCount(); x++)
 			{
-				addSlotToContainer(new SlotUntiSpacingChest(AnimalCrossingChest.get(), slotindex++, beginX + DistanceX * x, beginY + DistanceY * y));
+				addSlotToContainer(new Slot(AnimalCrossingChest.get(), slotindex++, beginX + DistanceX * x, beginY + DistanceY * y));
 			}
 		}
 
@@ -55,8 +53,6 @@ public class ContainerACChest extends Container
 			}
 		}*/
 
-		System.out.println("Container a Finished By "+slotindex);
-
 		slotindex = 0;
 		for (int y = 0; y < 4; y++)
 		{
@@ -66,9 +62,6 @@ public class ContainerACChest extends Container
 				addSlotToContainer(new Slot(playerContains, slotindex++, beginPlX + PLYbeginX + PLYDistanceX * x, PLYbeginY + PLYDistanceY * y));
 			}
 		}
-		System.out.println("Container p Finished By "+slotindex);
-
-		System.out.println("Size:"+inventorySlots.size());
 	}
 
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex)

@@ -11,9 +11,11 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.src.nucleareal.UtilMinecraft;
 import net.minecraft.src.nucleareal.animalcrossing.AnimalCrossing;
 import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.EnumFurniture;
-import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileEntityFurniture;
+import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileFurniture;
+import net.minecraft.src.nucleareal.animalcrossing.inukichi.UtilInukichi;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.AxisAlignedBB;
@@ -36,14 +38,14 @@ public class BlockFurniture extends BlockContainer
 
 	private EnumFurniture of(IBlockAccess world, int x, int y, int z)
 	{
-		TileEntityFurniture f = getTile(world, x, y, z);
+		TileFurniture f = getTile(world, x, y, z);
 		return EnumFurniture.of(f == null ? 0 : f.getFurnitureIndex());
 	}
 
-	private TileEntityFurniture getTile(IBlockAccess world, int x, int y, int z)
+	public TileFurniture getTile(IBlockAccess world, int x, int y, int z)
 	{
 		TileEntity e = world.getBlockTileEntity(x, y, z);
-		return (TileEntityFurniture) e;
+		return (TileFurniture) e;
 	}
 
 	public void onBlockAdded(World world, int x, int y, int z)
@@ -51,8 +53,8 @@ public class BlockFurniture extends BlockContainer
 		super.onBlockAdded(world, x, y, z);
 		if (world.getBlockTileEntity(x, y, z) == null)
 		{
-			world.setBlockTileEntity(x, y, z,
-					createTileEntity(world, world.getBlockMetadata(x, y, z)));
+			world.setBlockTileEntity(x, y, z, createTileEntity(world, world.getBlockMetadata(x, y, z)));
+			world.setBlockMetadataWithNotify(x, y, z, 15, 2);
 		}
 	}
 
@@ -62,11 +64,9 @@ public class BlockFurniture extends BlockContainer
 	}
 
 	@SideOnly(Side.CLIENT)
-	public Icon getBlockTexture(IBlockAccess par1IBlockAccess, int par2,
-			int par3, int par4, int par5)
+	public Icon getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
 	{
-		return this.getIcon(par5,
-				par1IBlockAccess.getBlockMetadata(par2, par3, par4));
+		return this.getIcon(par5, par1IBlockAccess.getBlockMetadata(par2, par3, par4));
 	}
 
 	@Override
@@ -83,7 +83,13 @@ public class BlockFurniture extends BlockContainer
 	@Override
 	public boolean canBlockStay(World world, int x, int y, int z)
 	{
+		if(isNotPlayerPlacedBy(world, x, y, z)) return true;
 		return of(world, x, y, z).canStayInThisPosition(world, x, y, z);
+	}
+
+	private boolean isNotPlayerPlacedBy(World world, int x, int y, int z)
+	{
+		return world.getBlockMetadata(x, y, z) != 0;
 	}
 
 	@Override
@@ -97,14 +103,12 @@ public class BlockFurniture extends BlockContainer
 		return AnimalCrossing.FurnitureRenderID;
 	}
 
-	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y,
-			int z)
+	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z)
 	{
 		of(world, x, y, z).setBlockBounds(this, world, x, y, z);
 	}
 
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x,
-			int y, int z)
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z)
 	{
 		return super.getCollisionBoundingBoxFromPool(world, x, y, z);
 	}
@@ -112,12 +116,12 @@ public class BlockFurniture extends BlockContainer
 	@Override
 	public TileEntity createNewTileEntity(World world)
 	{
-		return null;
+		return new TileFurniture();
 	}
 
 	public TileEntity createTileEntity(World world, int metadata)
 	{
-		return new TileEntityFurniture(metadata);
+		return createNewTileEntity(world);
 	}
 
 	@Override
@@ -147,27 +151,31 @@ public class BlockFurniture extends BlockContainer
 		return false;
 	}
 
-	public void onBlockPlacedBy(World world, int x, int y, int z,
-			EntityLivingBase entity, ItemStack ist)
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack ist)
 	{
-		int l = MathHelper
-				.floor_double((double) (entity.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-		TileEntityFurniture tile = getTile(world, x, y, z);
+		int l = MathHelper.floor_double((double) (entity.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+		TileFurniture tile = getTile(world, x, y, z);
 		int rl = l == 0 ? 2 : l == 1 ? 3 : l == 2 ? 0 : 1;
-		tile.setTileRotation(rl);
+		tile.setFurnitureIndex(ist.getItemDamage());
+		tile.setRotation(rl);
+
+		world.setBlockMetadataWithNotify(x, y, z, 0, 2);
 	}
 
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z,
-			ForgeDirection side)
+	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side)
 	{
 		return of(world, x, y, z).isBlockSolidOnSide(world, x, y, z, side);
 	}
 
-	public boolean onBlockActivated(World world, int x, int y, int z,
-			EntityPlayer player, int i, float fx, float fy, float fz)
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i, float fx, float fy, float fz)
 	{
-		return of(world, x, y, z).onBlockActivated(world, x, y, z, player, i,
-				fx, fy, fz);
+		if(isNotPlayerPlacedBy(world, x, y, z)) { checkPlayerBuyThis(world, x, y, z, player); return true; }
+		return of(world, x, y, z).onBlockActivated(world, x, y, z, player, i, fx, fy, fz);
+	}
+
+	private void checkPlayerBuyThis(World world, int x, int y, int z, EntityPlayer player)
+	{
+		UtilInukichi.addMessageByBuy(player, world, x, y, z, of(world, x, y, z));
 	}
 
 	public void onNeighborBlockChange(World world, int x, int y, int z, int side)
@@ -177,25 +185,22 @@ public class BlockFurniture extends BlockContainer
 
 	public boolean canPlaceBlockAt(World world, int x, int y, int z)
 	{
-		return super.canPlaceBlockAt(world, x, y, z)
-				&& canBlockStay(world, x, y, z);
+		if(isNotPlayerPlacedBy(world, x, y, z)) return true;
+		return super.canPlaceBlockAt(world, x, y, z) && canBlockStay(world, x, y, z);
 	}
 
-	public void onEntityCollidedWithBlock(World world, int x, int y, int z,
-			Entity entity)
+	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity)
 	{
 		of(world, x, y, z).onEntityCollidedWithBlock(world, x, y, z, entity);
 	}
 
-	public void addCollisionBoxesToList(World world, int x, int y, int z,
-			AxisAlignedBB axis, List list, Entity entity)
+	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axis, List list, Entity entity)
 	{
 		EnumFurniture e = of(world, x, y, z);
 
 		for (int i = 0; i < e.getCollisionBoxesCount(); i++)
 		{
-			of(world, x, y, z).addCollisionBoxesToList(world, x, y, z, axis,
-					list, entity, i);
+			of(world, x, y, z).addCollisionBoxesToList(world, x, y, z, axis, list, entity, i);
 			super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
 		}
 	}
@@ -203,36 +208,44 @@ public class BlockFurniture extends BlockContainer
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int a, int b)
 	{
-		TileEntityFurniture tile = getTile(world, x, y, z);
-		if (tile != null)
+		TileFurniture tile = getTile(world, x, y, z);
+
+		if(isNotPlayerPlacedBy(world, x, y, z)) { replaceBlock(world, x, y, z, tile); return; }
+
+		if (tile != null && !UtilMinecraft.getWorldAndPlayer("").getV2().capabilities.isCreativeMode)
 		{
-			for (int i = 0; i < tile.getSizeInventory(); i++)
-			{
-				ItemStack ist = tile.getStackInSlot(i);
-				if (ist != null)
-				{
-					float fx = world.rand.nextFloat() * .8F + .1F;
-					float fy = world.rand.nextFloat() * .8F + .1F;
-					float fz = world.rand.nextFloat() * .8F + .1F;
-					EntityItem ei = new EntityItem(world, x+fx, y+fy, z+fz, ist.copy());
-					if (ist.hasTagCompound())
-						ei.getEntityItem().setTagCompound((NBTTagCompound) ist.getTagCompound().copy());
-					float fr = .05F;
-					ei.motionX = world.rand.nextGaussian() * fr;
-					ei.motionY = world.rand.nextGaussian() * fr + .2F;
-					ei.motionZ = world.rand.nextGaussian() * fr;
-					world.spawnEntityInWorld(ei);
-				}
-			}
 			EntityItem ei = new EntityItem(world, x+.5D, y+.5D, z+.5D, new ItemStack(this, 1, tile.getFurnitureIndex()));
 			float fr = .05F;
 			ei.motionX = world.rand.nextGaussian() * fr;
 			ei.motionX = world.rand.nextGaussian() * fr + .2F;
 			ei.motionX = world.rand.nextGaussian() * fr;
 			world.spawnEntityInWorld(ei);
-
-			world.func_96440_m(x, y, z, a);
 		}
+
+		world.removeBlockTileEntity(x, y, z);
+
 		super.breakBlock(world, x, y, z, a, b);
+	}
+
+	private void replaceBlock(World world, int x, int y, int z, TileFurniture tile)
+	{
+		world.setBlock(x, y, z, AnimalCrossing.Furniture.blockID, 15, 7);
+		world.setBlockTileEntity(x, y, z, new TileFurniture());
+
+		getTile(world, x, y, z).setFurnitureIndex(tile.getFurnitureIndex());
+		getTile(world, x, y, z).setRotation(tile.getRotation());
+		getTile(world, x, y, z).setLighting(tile.getLighting());
+	}
+
+	@Override
+	public float getBlockHardness(World world, int x, int y, int z)
+    {
+		if(world.getBlockMetadata(x, y, z) == 0) return blockHardness;
+		return -1F;
+    }
+
+	private boolean isPlayerPlacedBy(World world, int x, int y, int z)
+	{
+		return world.getBlockMetadata(x, y, z) == 0;
 	}
 }

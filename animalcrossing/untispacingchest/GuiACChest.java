@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.src.nucleareal.Position;
 import net.minecraft.src.nucleareal.animalcrossing.AnimalCrossing;
+import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileFurniture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -26,10 +27,10 @@ public class GuiACChest extends GuiContainer
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		((TileFurniture)world.getBlockTileEntity(x, y, z)).openChest();
 	}
 
-	private static final ResourceLocation texture = new ResourceLocation(
-			"nc:textures/gui/container/acchest.png");
+	private static final ResourceLocation texture = new ResourceLocation("nc:textures/gui/container/acchest.png");
 	private IInventory playerInv;
 	private EntityPlayer player;
 	private World world;
@@ -50,9 +51,14 @@ public class GuiACChest extends GuiContainer
 	@Override
 	public void initGui()
     {
+		super.initGui();
         buttonList.clear();
-        prev = new GuiButton(prevIndex,  0, 0, 16, 16, "↑");
-		next = new GuiButton(nextIndex, 16, 0, 16, 16, "↓");
+
+        int dx = (width  - xSize) / 2 + 40;
+        int dy = (height - ySize) / 2;
+
+        prev = new GuiButton(prevIndex, dx+152, dy+10, 18, 18, "↑");
+		next = new GuiButton(nextIndex, dx+152, dy+40, 18, 18, "↓");
 		buttonList.add(prev);
 		buttonList.add(next);
     }
@@ -60,8 +66,9 @@ public class GuiACChest extends GuiContainer
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2)
 	{
-		int swidth = fontRenderer.getStringWidth(String.valueOf(page));
-		fontRenderer.drawString(String.valueOf(page), xBegin - swidth, yBegin, 0x000000);
+		String str = String.valueOf(page+1);
+		int swidth = fontRenderer.getStringWidth(str);
+		fontRenderer.drawString(str, xBegin - swidth, yBegin, 0x000000);
 		fontRenderer.drawString("/" + AnimalCrossingChest.get().getSizePages(), xBegin, yBegin, 0x000000);
 		super.drawGuiContainerForegroundLayer(par1, par2);
 	}
@@ -69,7 +76,6 @@ public class GuiACChest extends GuiContainer
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int i, int j)
 	{
-		drawDefaultBackground();
 		GL11.glColor4f(1F, 1F, 1F, 1F);
 		mc.getTextureManager().bindTexture(texture);
 		int xs = (width - xSize)/2;
@@ -86,5 +92,12 @@ public class GuiACChest extends GuiContainer
 			case nextIndex: AnimalCrossingChest.get().setActivePage(page+1); break;
 		}
 		player.openGui(AnimalCrossing.instance, AnimalCrossing.FurnitureChestGuiID, world, x, y, z);
+	}
+
+	@Override
+	public void onGuiClosed()
+	{
+		//super.onGuiClosed();
+		((TileFurniture)world.getBlockTileEntity(x, y, z)).closeChest();
 	}
 }

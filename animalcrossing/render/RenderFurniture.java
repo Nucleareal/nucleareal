@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.src.nucleareal.ModelNuclearealBase;
 import net.minecraft.src.nucleareal.animalcrossing.AnimalCrossing;
 import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.EnumFurniture;
-import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileEntityFurniture;
+import net.minecraft.src.nucleareal.animalcrossing.block.tileentity.TileFurniture;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 
@@ -21,11 +21,11 @@ public class RenderFurniture extends TileEntitySpecialRenderer implements ISimpl
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double d0, double d1, double d2, float f)
 	{
-		TileEntityFurniture tile = (TileEntityFurniture) tileentity;
+		TileFurniture tile = (TileFurniture) tileentity;
 		doRenderFurniture(tile, d0, d1, d2, f);
 	}
 
-	private void doRenderFurniture(TileEntityFurniture tile, double x, double y, double z, float f)
+	private void doRenderFurniture(TileFurniture tile, double x, double y, double z, float f)
 	{
 		int meta = tile.getFurnitureIndex();
 		EnumFurniture e = EnumFurniture.of(meta);
@@ -35,7 +35,7 @@ public class RenderFurniture extends TileEntitySpecialRenderer implements ISimpl
 		int uid = tile.worldObj.getBlockId(tile.xCoord, tile.yCoord-1, tile.zCoord);
 		if(uid == AnimalCrossing.Furniture.blockID)
 		{
-			EnumFurniture under = EnumFurniture.of(((TileEntityFurniture)tile.worldObj.getBlockTileEntity(tile.xCoord, tile.yCoord-1, tile.zCoord)).getFurnitureIndex());
+			EnumFurniture under = EnumFurniture.of(((TileFurniture)tile.worldObj.getBlockTileEntity(tile.xCoord, tile.yCoord-1, tile.zCoord)).getFurnitureIndex());
 			subY = under.getSubtractYParam();
 		}
 
@@ -50,7 +50,7 @@ public class RenderFurniture extends TileEntitySpecialRenderer implements ISimpl
 			GL11.glScalef(1.0F, -1.0F, -1.0F);
 			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 
-			float rotation = tile.getBlockRotation(i);
+			float rotation = tile.getBlockRenderRotation(i);
 
 			GL11.glRotatef((float)rotation, 0.0F, 1.0F, 0.0F);
 			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);

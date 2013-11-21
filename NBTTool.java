@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.src.ModLoader;
+import net.minecraft.world.World;
 
 public class NBTTool
 {
@@ -55,14 +56,14 @@ public class NBTTool
 		}
 	}
 
-	public int getIntValueSafely(String name)
-	{
-		return getIntValueSafely(name, 0);
-	}
-
 	public NBTTagCompound getTagCompound()
 	{
 		return Tag;
+	}
+
+	public int getIntValueSafely(String name)
+	{
+		return getIntValueSafely(name, 0);
 	}
 
 	public int getIntValueSafely(String name, int defValue)
@@ -87,5 +88,42 @@ public class NBTTool
 		nowValue += size;
 		Tag.setInteger(name, nowValue);
 		return nowValue;
+	}
+
+	public void setIntValue(String key, int val)
+	{
+		Tag.setInteger(key, val);
+	}
+
+	public void setWorldOriginalValue(World world, String okey, String value)
+	{
+		Tag.setString(createOriginalKey(world, okey), value);
+	}
+
+	public String getWorldOriginalValue(World world, String okey)
+	{
+		String key = createOriginalKey(world, okey);
+		if(Tag.hasKey(key))
+		{
+			return Tag.getString(key);
+		}
+		return null;
+	}
+
+	private String createOriginalKey(World world, String key)
+	{
+		return String.valueOf(world.getSeed())+":"+world.getWorldInfo().getWorldName()+":"+key;
+	}
+
+	public void setWorldOriginalIntegerValue(World world, String okey, int value)
+	{
+		Tag.setInteger(createOriginalKey(world, okey), value);
+	}
+
+	public int getWorldOriginalIntegerValue(World world, String okey)
+	{
+		String key = createOriginalKey(world, okey);
+
+		return getIntValueSafely(key);
 	}
 }

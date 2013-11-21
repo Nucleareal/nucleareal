@@ -18,7 +18,7 @@ import cpw.mods.fml.common.network.Player;
 
 public class FurniturePacketHandler implements IPacketHandler
 {
-	public static Packet getPacket(TileEntityFurniture tile)
+	public static Packet getPacket(TileFurniture tile)
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(bos);
@@ -74,11 +74,11 @@ public class FurniturePacketHandler implements IPacketHandler
 				World world = AnimalCrossing.proxy.getClientWorld();
 				TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
 
-				if (tileEntity instanceof TileEntityFurniture)
+				if (tileEntity instanceof TileFurniture)
 				{
-					TileEntityFurniture tile = (TileEntityFurniture)tileEntity;
-					tile.setTileMetadata(meta);
-					tile.setTileRotation(rotation);
+					TileFurniture tile = (TileFurniture)tileEntity;
+					tile.setFurnitureIndex(meta);
+					tile.setRotation(rotation);
 					tile.setLighting(isLighting);
 				}
 			}

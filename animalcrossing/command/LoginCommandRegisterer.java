@@ -22,6 +22,12 @@ public class LoginCommandRegisterer
 		cmap = manager.getCommands();
 
 		register(new CommandSpawnFloatingBalloon());
+		register(new CommandDisplayPoint());
+		register(new CommandShopUpgrade());
+		register(new CommandWarpToShop());
+		register(new CommandBuy());
+		register(new CommandIncleaseMoney());
+		//register(new CommandWarpOut());
 	}
 
 	private void register(CommandBase command)
